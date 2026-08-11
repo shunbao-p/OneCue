@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "status": "phase2-development-only",
+  "target": "aarch64-apple-darwin",
+  "python": {
+    "version": "3.12.13",
+    "asset": "cpython-3.12.13+20260807-aarch64-apple-darwin-install_only.tar.gz",
+    "sha256": "4201588fc5051c2ba988abbe1f033d318965ee378fadf7fb7ef79882ba7be84b",
+    "size": 25168985,
+    "source": "astral-sh/python-build-standalone release asset verified in Phase 0"
+  },
+  "requirements": {
+    "path": "constraints/macos-arm64-py312.lock",
+    "source": "Phase 1 accepted pip freeze after Gradio 6.3.0 completion",
+    "python_bootstrap_tools_excluded": [
+      "pip==25.0.1"
+    ]
+  },
+  "external_tools": {
+    "ffmpeg": {
+      "version": "6.0",
+      "path_in_snapshot": "bin/ffmpeg"
+    },
+    "ffprobe": {
+      "version": "6.0",
+      "path_in_snapshot": "bin/ffprobe"
+    }
+  },
+  "notes": [
+    "This lock is for the Phase 2/3 macOS development snapshot, not the final release.",
+    "Wheel filenames and SHA-256 values are recorded by the Phase 2 Mac rebuild evidence."
+  ]
+}

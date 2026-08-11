@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>【包B】语音引擎包 使用手册</title>
+<style>
+  :root{ --bg:#0e1116; --card:#161b22; --line:#2a313c; --txt:#e6edf3; --sub:#9aa7b4; --acc:#7c5cff; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;line-height:1.7}
+  .wrap{max-width:860px;margin:0 auto;padding:32px 20px 64px}
+  h1{font-size:26px;margin:0 0 6px}
+  h2{font-size:19px;margin:30px 0 10px;color:#fff;border-left:4px solid var(--acc);padding-left:10px}
+  .lead{color:var(--sub);margin:0 0 8px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:14px 0}
+  code{background:#0b0e13;border:1px solid var(--line);border-radius:6px;padding:1px 7px;color:#ffd479;font-size:13px}
+  .vram{display:flex;gap:14px;flex-wrap:wrap;margin:10px 0}
+  .v{flex:1;min-width:240px;background:#0b0e13;border:1px solid var(--line);border-radius:10px;padding:14px}
+  .v b{color:#fff}
+  .warn{border-color:#5a3a1a;background:#1c1407;color:#ffcf8a}
+  ol,ul{margin:6px 0 6px 0;padding-left:22px}
+  li{margin:4px 0}
+  .ok{color:#7ee787}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>【包B】语音引擎包 使用手册</h1>
+  <p class="lead">本地离线 TTS，把文字合成为梁文峰音色语音，与【包A】视频引擎配合使用。</p>
+
+  <div class="card">
+    <h2 style="margin-top:6px">一、硬件要求（重要）</h2>
+    <div class="vram">
+      <div class="v"><b>快速版</b>（dots-tts-mf）<br>约 <b>8GB 显存</b> 即可<br><span class="sub">速度约 2.5 倍快，推荐大多数人先用这个</span></div>
+      <div class="v"><b>质量版</b>（dots-tts-soar）<br>建议 <b>10GB 以上显存</b><br><span class="sub">克隆相似度最高、音质最好，但更慢更吃显存</span></div>
+    </div>
+    <p>必须有 <b>NVIDIA 显卡</b> 且支持 CUDA。没有独显或显存不够 → 本包跑不了，但【包A】视频引擎仍可正常出片。</p>
+  </div>
+
+  <h2>二、启动步骤</h2>
+  <div class="card">
+    <ol>
+      <li>解压本包到一个<b>纯英文路径</b>（例如 <code>D:\语音引擎包</code>），避免路径含中文/空格。</li>
+      <li>双击 <code>启动-快速版.bat</code> 或 <code>启动-质量版.bat</code>。
+        <ul><li>先弹出黑窗口设置运行环境；</li><li>然后加载模型（首次 1~3 分钟，<b>请勿关闭窗口</b>）；</li><li>完成后自动打开本地网页 <code>http://127.0.0.1:7860</code>。</li></ul></li>
+      <li>在网页里输入文字即可试听合成效果。</li>
+    </ol>
+  </div>
+
+  <h2>三、与【包A】视频引擎联动</h2>
+  <div class="card">
+    <ol>
+      <li>确认本包已启动（本地网页能打开）。</li>
+      <li>打开【包A】视频引擎，双击 <code>②连接语音引擎.bat</code>（找不到时可把本包文件夹直接拖到该 bat 上）。</li>
+      <li>回到【包A】网页刷新，配音/音色里出现“梁文峰”等音色。<span class="ok">完成</span></li>
+      <li>视频生成时勾选“配音”，即可自动生成带梁文峰声音的成片。</li>
+    </ol>
+  </div>
+
+  <h2>四、文件缺失怎么办</h2>
+  <div class="card warn">
+    若启动器提示“<b>文件不完整，请重新解压</b>”，说明压缩包没传完整：请向发布者重新要一份完整压缩包，解压整个文件夹后再试。<br>
+    本包<b>不做自动下载</b>，以免下载到不完整或被篡改的文件。
+  </div>
+
+  <h2>五、排错</h2>
+  <div class="card">
+    <ul>
+      <li><b>显存不足</b>：换“快速版”；仍报错则本机显卡不满足要求。</li>
+      <li><b>中文用户名导致 Triton 报错</b>：本启动器已把缓存改到包内；若仍报 torch compile 错误，可打开 bat 把 <code>:: set TORCH_COMPILE_DISABLE=1</code> 前的 <code>::</code> 删掉。</li>
+      <li><b>端口被占用</b>：默认 7860，关闭占用程序后重试。</li>
+      <li><b>想彻底重来</b>：关闭黑窗口，删掉包内 <code>.triton_cache</code> / <code>.inductor_cache</code> / <code>tmp</code> 再启动。</li>
+    </ul>
+  </div>
+
+  <h2>六、隐私</h2>
+  <div class="card"><p>包内不含任何私人录音与文稿，所有合成都在你本机完成，完全离线、不联网、不上传数据。</p></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,18 @@
+# Recommended versions for reproducible installs.
+# pyproject.toml keeps compatibility ranges; install with `pip -c` to use these
+# versions by default while still allowing users to omit this file for newer
+# compatible releases.
+torch==2.8.0
+torchaudio==2.8.0
+transformers==4.57.0
+librosa==0.11.0
+soundfile==0.13.1
+numpy==2.2.6
+pydantic==2.12.5
+PyYAML==6.0.3
+safetensors==0.8.0rc0
+
+# Optional `full` extra.
+accelerate==1.12.0
+tensorboard==2.20.0
+ruff==0.15.12

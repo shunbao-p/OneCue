@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>视频生成 + 文字生音频 工作台</title>
+<style>
+
+  :root{
+    --txt:#f3eeff; --sub:#c2b4ec;
+    --line:rgba(196,176,255,0.30);
+    --acc:#cf9bff; --acc2:#93b3ff;
+    --ok:#3ddc84; --err:#ff5d7e;
+    /* 液态玻璃：整体不透明度 0.20（= 80% 透明），靠多层斜向渐变做流动折射 */
+    --glass:linear-gradient(135deg,rgba(255,255,255,0.20) 0%,rgba(255,255,255,0.06) 34%,
+            rgba(255,255,255,0.03) 58%,rgba(255,255,255,0.14) 100%),
+            linear-gradient(to bottom,rgba(255,255,255,0.13) 0%,rgba(255,255,255,0) 16%),
+            rgba(255,255,255,0.085);
+    --glass2:linear-gradient(135deg,rgba(255,255,255,0.14) 0%,rgba(255,255,255,0.03) 55%,
+            rgba(255,255,255,0.09) 100%),rgba(255,255,255,0.06);
+    --glassBorder:1px solid rgba(255,255,255,0.26);
+    /* 液态感核心：外投影拉深 + 四边内高光描出玻璃厚度 */
+    --glassShadow:0 18px 50px rgba(8,3,26,0.46),0 3px 12px rgba(8,3,26,0.30),
+            inset 0 1px 0 rgba(255,255,255,0.58),inset 0 -1px 0 rgba(255,255,255,0.10),
+            inset 1px 0 0 rgba(255,255,255,0.15),inset -1px 0 0 rgba(255,255,255,0.15);
+    --blurA:blur(28px) saturate(190%) brightness(1.12);
+    --blurB:blur(14px) saturate(160%);
+    /* 补回 HTML 内联样式引用的变量（原定义已随主题改造丢失，导致状态条/进度槽透明） */
+    --panel:linear-gradient(135deg,rgba(255,255,255,0.16),rgba(255,255,255,0.05) 60%,rgba(255,255,255,0.11)),
+            rgba(255,255,255,0.07);
+    --panel2:rgba(255,255,255,0.13);
+    --curW:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSczMicgaGVpZ2h0PSczMicgdmlld0JveD0nMCAwIDMyIDMyJz48bGluZSB4MT0nMTAnIHkxPScxMCcgeDI9JzI4JyB5Mj0nMjgnIHN0cm9rZT0nI2E4NTVmNycgc3Ryb2tlLXdpZHRoPSczLjInIHN0cm9rZS1saW5lY2FwPSdyb3VuZCcvPjxsaW5lIHgxPScxMCcgeTE9JzEwJyB4Mj0nMjgnIHkyPScyOCcgc3Ryb2tlPScjZDZiY2ZmJyBzdHJva2Utd2lkdGg9JzEuMScgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJy8+PHBhdGggZD0nTTcgMSBMOC41IDUgTDEyLjYgNSBMOS4zIDcuNiBMMTAuNiAxMS43IEw3IDkuMiBMMy40IDExLjcgTDQuNyA3LjYgTDEuNCA1IEw1LjUgNSBaJyBmaWxsPScjZmZkODZiJyBzdHJva2U9JyNhODU1ZjcnIHN0cm9rZS13aWR0aD0nMC41JyBzdHJva2UtbGluZWpvaW49J3JvdW5kJy8+PGNpcmNsZSBjeD0nMTQnIGN5PSc0JyByPScxLjEnIGZpbGw9JyNmZmU5YTgnLz48Y2lyY2xlIGN4PSc0JyBjeT0nMTQnIHI9JzEnIGZpbGw9JyNjOWE3ZmYnLz48Y2lyY2xlIGN4PScxMicgY3k9JzEyJyByPScwLjknIGZpbGw9JyNmZmZmZmYnLz48L3N2Zz4=") 6 6, auto;
+    --curH:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSczNCcgaGVpZ2h0PSczNCcgdmlld0JveD0nMCAwIDM0IDM0Jz48Y2lyY2xlIGN4PSc3LjUnIGN5PSc3LjUnIHI9JzcnIGZpbGw9JyNlYzQ4OTknIG9wYWNpdHk9JzAuMTgnLz48bGluZSB4MT0nMTEnIHkxPScxMScgeDI9JzMwJyB5Mj0nMzAnIHN0cm9rZT0nI2VjNDg5OScgc3Ryb2tlLXdpZHRoPSczLjQnIHN0cm9rZS1saW5lY2FwPSdyb3VuZCcvPjxsaW5lIHgxPScxMScgeTE9JzExJyB4Mj0nMzAnIHkyPSczMCcgc3Ryb2tlPScjZmZkMWVjJyBzdHJva2Utd2lkdGg9JzEuMicgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJy8+PHBhdGggZD0nTTcuNSAxIEw5LjIgNS40IEwxMy45IDUuNiBMMTAuMiA4LjUgTDExLjYgMTMgTDcuNSAxMC4zIEwzLjQgMTMgTDQuOCA4LjUgTDEuMSA1LjYgTDUuOCA1LjQgWicgZmlsbD0nI2ZmZjBhOCcgc3Ryb2tlPScjZWM0ODk5JyBzdHJva2Utd2lkdGg9JzAuNicgc3Ryb2tlLWxpbmVqb2luPSdyb3VuZCcvPjxjaXJjbGUgY3g9JzE1JyBjeT0nNCcgcj0nMS4yJyBmaWxsPScjZmZkMWVjJy8+PGNpcmNsZSBjeD0nNCcgY3k9JzE1JyByPScxLjEnIGZpbGw9JyNmOWE4ZDQnLz48Y2lyY2xlIGN4PScxMycgY3k9JzEzJyByPScxJyBmaWxsPScjZmZmZmZmJy8+PC9zdmc+") 7 7, pointer;
+  }
+  *{box-sizing:border-box}
+  html,body{cursor:var(--curW)}
+  *{cursor:inherit}
+  body{margin:0;font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;
+       color:var(--txt);padding:24px;min-height:100vh;position:relative;
+       background:linear-gradient(135deg,#160a2e 0%,#241246 20%,#15173a 42%,#3a1a63 66%,#1a0e3d 84%,#0c0a24 100%);
+       background-size:360% 360%;animation:auroraShift 30s ease infinite}
+  @keyframes auroraShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+       background:
+         radial-gradient(680px 460px at 12% 6%,rgba(168,85,247,0.42),transparent 60%),
+         radial-gradient(620px 420px at 88% 16%,rgba(96,165,250,0.30),transparent 60%),
+         radial-gradient(720px 520px at 78% 94%,rgba(217,70,239,0.26),transparent 62%),
+         radial-gradient(520px 400px at 30% 82%,rgba(56,189,248,0.18),transparent 60%)}
+  body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.55;
+       background-image:
+         linear-gradient(rgba(150,120,255,0.10) 1px,transparent 1px),
+         linear-gradient(90deg,rgba(120,180,255,0.10) 1px,transparent 1px);
+       background-size:44px 44px;
+       -webkit-mask-image:radial-gradient(ellipse 82% 72% at 50% 38%,#000 52%,transparent 100%);
+       mask-image:radial-gradient(ellipse 82% 72% at 50% 38%,#000 52%,transparent 100%)}
+  h1{font-size:20px;margin:0 0 4px;letter-spacing:.5px;color:#f2ecff;
+     text-shadow:0 0 20px rgba(168,85,247,0.6),0 0 40px rgba(96,165,250,0.28),0 1px 2px rgba(0,0,0,0.35)}
+  .sub{color:var(--sub);font-size:13px;margin-bottom:20px}
+  /* 仅提亮直接压在深色背景上的页面级副标题（面板内的 .sub 不受影响） */
+  .wrap > .sub{color:#c2b6ec;text-shadow:0 1px 3px rgba(0,0,0,0.35)}
+  .wrap{max-width:760px;margin:0 auto}
+  .panel{background:var(--glass);backdrop-filter:var(--blurA);
+         -webkit-backdrop-filter:var(--blurA);
+         border:var(--glassBorder);border-radius:22px;padding:18px;margin-bottom:18px;
+         box-shadow:var(--glassShadow);position:relative;overflow:hidden;
+         transition:box-shadow .35s ease,transform .35s ease}
+  /* 液态高光：沿玻璃表面缓慢流过的一道镜面反光 */
+  .panel::before{content:"";position:absolute;top:0;left:-60%;width:55%;height:100%;
+         pointer-events:none;z-index:0;
+         background:linear-gradient(100deg,transparent 0%,rgba(255,255,255,0.16) 45%,
+                    rgba(255,255,255,0.28) 52%,rgba(255,255,255,0.10) 60%,transparent 100%);
+         filter:blur(6px);animation:liquidSheen 9s ease-in-out infinite}
+  @keyframes liquidSheen{0%{left:-60%}55%{left:115%}100%{left:115%}}
+  .panel > *{position:relative;z-index:1}
+  .panel:hover{box-shadow:0 24px 60px rgba(8,3,26,0.52),0 4px 14px rgba(8,3,26,0.34),
+         inset 0 1px 0 rgba(255,255,255,0.70),inset 0 -1px 0 rgba(255,255,255,0.12),
+         inset 1px 0 0 rgba(255,255,255,0.18),inset -1px 0 0 rgba(255,255,255,0.18)}
+  .phead{font-size:17px;font-weight:800;margin:0 0 6px;color:#e3c8ff;
+         border-left:4px solid var(--acc);padding-left:10px;
+         text-shadow:0 0 16px rgba(190,130,255,0.45)}
+  .phead.t{color:#7c6fdd}
+  .row{display:flex;gap:16px;flex-wrap:wrap}
+  .drop{flex:1;min-width:240px;border:2px dashed var(--line);border-radius:12px;
+        padding:18px;text-align:center;transition:.15s;
+        background:linear-gradient(135deg,rgba(255,255,255,0.12),rgba(255,255,255,0.04));
+        backdrop-filter:var(--blurB);
+        -webkit-backdrop-filter:var(--blurB);position:relative;
+        box-shadow:inset 0 1px 0 rgba(255,255,255,0.28)}
+  .drop:hover{border-color:var(--acc);
+        background:linear-gradient(135deg,rgba(255,255,255,0.20),rgba(255,255,255,0.08));
+        box-shadow:inset 0 1px 0 rgba(255,255,255,0.42),0 0 24px rgba(190,130,255,0.22)}
+  .clr{position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:50%;
+       border:1px solid var(--line);background:rgba(255,255,255,0.20);color:var(--txt);
+       font-size:12px;line-height:18px;padding:0;display:none}
+  .drop.have .clr{display:block}
+  .clr:hover{background:var(--err);color:#fff;border-color:var(--err)}
+  .drop.have{border-color:var(--ok);background:rgba(61,220,132,0.16);
+        box-shadow:inset 0 1px 0 rgba(255,255,255,0.30),0 0 22px rgba(61,220,132,0.18)}
+  .drop .ic{font-size:28px}
+  .drop .nm{font-size:13px;margin-top:6px;color:var(--sub);word-break:break-all}
+  .drop b{color:var(--txt)}
+  input[type=file]{display:none}
+  label.fld{display:block;font-size:13px;color:var(--sub);margin:10px 0 6px}
+  .sel{width:100%;max-width:320px;background:rgba(255,255,255,0.13);border:1px solid var(--line);
+       color:var(--txt);border-radius:10px;padding:9px;backdrop-filter:var(--blurB);
+       -webkit-backdrop-filter:var(--blurB);
+       box-shadow:inset 0 1px 0 rgba(255,255,255,0.26)}
+  /* 下拉展开项由系统渲染，必须显式给深底浅字，否则白底白字看不见 */
+  .sel option,select option{background:#1d1038;color:#f3eeff}
+  .ta{width:100%;min-height:120px;background:rgba(255,255,255,0.11);border:1px solid var(--line);
+      color:var(--txt);border-radius:14px;padding:12px;font-size:14px;resize:vertical;
+      font-family:inherit;line-height:1.6;backdrop-filter:var(--blurB);-webkit-backdrop-filter:var(--blurB);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,0.24)}
+  .ta::placeholder{color:rgba(220,208,255,0.45)}
+  .ta:focus,.sel:focus,.opts input:focus{outline:none;border-color:var(--acc);
+      background:rgba(255,255,255,0.17);
+      box-shadow:0 0 0 3px rgba(190,130,255,0.26),inset 0 1px 0 rgba(255,255,255,0.34)}
+  .opts{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+  .opts input[type=number]{width:84px;background:rgba(255,255,255,0.13);border:1px solid var(--line);
+        color:var(--txt);border-radius:10px;padding:7px;
+        box-shadow:inset 0 1px 0 rgba(255,255,255,0.24)}
+  .chk{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--sub)}
+  button.go{background:linear-gradient(135deg,#c084fc,#a855f7);color:#fff;border:0;border-radius:12px;
+        padding:12px 26px;font-size:15px;font-weight:700;margin-top:6px;
+        box-shadow:0 6px 20px rgba(168,85,247,0.38);transition:.15s}
+  button.go:hover{transform:translateY(-1px);box-shadow:0 10px 26px rgba(168,85,247,0.5)}
+  button.go:disabled{opacity:.5;box-shadow:none;transform:none}
+  button.go2{background:linear-gradient(135deg,#9db8ff,#7c9cff);color:#10233f;
+        box-shadow:0 6px 20px rgba(124,156,255,0.4)}
+  button.go2:hover{box-shadow:0 10px 26px rgba(124,156,255,0.52)}
+  .bar{height:22px;background:rgba(255,255,255,0.12);border-radius:12px;overflow:hidden;
+       border:1px solid var(--line);box-shadow:inset 0 1px 3px rgba(8,3,26,0.35)}
+  .fill{height:100%;width:0%;background:linear-gradient(90deg,#c084fc,#7c9cff);
+        box-shadow:0 0 18px rgba(168,85,247,0.55);
+        transition:width .25s ease;text-align:center;font-size:12px;color:#fff;line-height:22px;
+        font-weight:700;text-shadow:0 1px 2px rgba(80,40,140,.35)}
+  .meta{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--sub);
+        margin-top:8px;flex-wrap:wrap}
+  .meta b{color:var(--txt)}
+  .log{background:rgba(14,7,34,0.34);border:1px solid var(--line);border-radius:14px;height:150px;
+       overflow:auto;padding:12px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;
+       color:#d9d0f7;white-space:pre-wrap;line-height:1.5;backdrop-filter:var(--blurB);
+       -webkit-backdrop-filter:var(--blurB);box-shadow:inset 0 1px 0 rgba(255,255,255,0.14)}
+  #log,#ttsLog{background:rgba(14,7,34,0.34);border:1px solid var(--line);border-radius:14px;
+       min-height:56px;max-height:230px;overflow:auto;padding:12px;
+       font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;color:#d9d0f7;
+       white-space:pre-wrap;line-height:1.5;backdrop-filter:var(--blurB);
+       -webkit-backdrop-filter:var(--blurB);box-shadow:inset 0 1px 0 rgba(255,255,255,0.14)}
+  .tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:12px;margin-right:8px}
+  .t-ok{background:rgba(61,220,132,0.18);color:#7cf5b4;border:1px solid rgba(61,220,132,0.32)}
+  .t-err{background:rgba(255,93,126,0.18);color:#ffa8ba;border:1px solid rgba(255,93,126,0.32)}
+  .t-run{background:rgba(147,179,255,0.20);color:#bcd0ff;border:1px solid rgba(147,179,255,0.34)}
+  .hint{font-size:12px;color:var(--sub);margin-top:8px}
+  a.dl{color:#d8b6ff;text-decoration:none;font-weight:600;
+       text-shadow:0 0 12px rgba(190,130,255,0.4)}
+  a.dl:hover{text-decoration:underline}
+  .outbox{margin-top:10px;font-size:12px;color:var(--sub);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .outbox code{background:rgba(14,7,34,0.30);border:1px solid var(--line);border-radius:10px;padding:6px 9px;
+        color:#d9d0f7;word-break:break-all;flex:1;min-width:200px}
+  .outbox code:hover{border-color:var(--acc);color:var(--txt)}
+  .outbox code.empty{color:var(--sub);font-style:italic}
+  button.mini{background:rgba(255,255,255,0.13);border:1px solid var(--line);color:var(--txt);border-radius:10px;
+        padding:6px 11px;font-size:12px;backdrop-filter:var(--blurB);-webkit-backdrop-filter:var(--blurB);
+        box-shadow:inset 0 1px 0 rgba(255,255,255,0.26);transition:.18s}
+  button.mini:hover{border-color:var(--acc);background:rgba(255,255,255,0.22);
+        box-shadow:inset 0 1px 0 rgba(255,255,255,0.40),0 0 18px rgba(190,130,255,0.24)}
+  .ref-player{margin-top:8px;padding:9px;background:rgba(255,255,255,0.12);border:1px solid var(--line);
+        border-radius:14px;backdrop-filter:var(--blurB);-webkit-backdrop-filter:var(--blurB);
+        box-shadow:inset 0 1px 0 rgba(255,255,255,0.26)}
+  .ref-player audio{filter:none;width:100%}
+  /* frosted 大模型状态条 */
+  .dotsbar{background:var(--glass)!important;backdrop-filter:var(--blurA);
+        -webkit-backdrop-filter:var(--blurA);border:var(--glassBorder)!important;
+        border-radius:18px!important;box-shadow:var(--glassShadow)}
+  /* 覆盖内联深色小代码块 */
+  #cacheDir{background:rgba(14,7,34,0.34)!important;color:#cfc4f2!important;
+        border:1px solid var(--line)!important;border-radius:8px!important}
+  /* 覆盖 TTS 停止按钮的内联红背景，让停止按钮也融入紫色主题（玫红警告） */
+  #ttsStopBtn{background:linear-gradient(135deg,#f472b6,#e11d48)!important;color:#fff!important;
+        box-shadow:0 6px 20px rgba(225,29,72,0.35)!important;border:0!important}
+  #ttsStopBtn:hover{box-shadow:0 10px 26px rgba(225,29,72,0.48)!important}
+  /* 统一所有小标题为亮紫 */
+  .phead.t{color:#e3c8ff!important}
+  /* 高透玻璃上正文加一层极淡描边，保证任意背景亮度下都读得清 */
+  .panel,.dotsbar{text-shadow:0 1px 2px rgba(8,3,26,0.45)}
+  .drop b,.meta b{color:#ffffff}
+  /* 仙女棒 hover 光标（可点击元素） */
+  button,select,a,label,input,.drop,.clr,.outbox code,#cacheDir{cursor:var(--curH)!important}
+  /* 光标闪粒（纯视觉） */
+  .fairy-spark{position:fixed;pointer-events:none;z-index:99999;
+        transform:translate(-50%,-50%);animation:fairyFade .8s ease-out forwards;
+        text-shadow:0 0 6px rgba(192,132,252,.8)}
+  @keyframes fairyFade{0%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(0deg)}
+        100%{opacity:0;transform:translate(-50%,-120%) scale(.35) rotate(40deg)}}
+
+  /* 液态玻璃增强补丁：确保所有面板内小字在深紫背景上锐利可读 */
+  .meta,.hint,.panel .sub,.drop .nm,.drop b,
+  .opts label,.chk label,.fld
+      {color:#e8e0ff;text-shadow:0 1px 2px rgba(8,3,26,0.45)}
+  #cacheDir{color:#f3eeff!important;background:rgba(22,12,52,0.65)!important;
+        border:1px solid rgba(196,176,255,0.45)!important}
+  .meta b{color:#ffffff}
+  .hint a.dl{color:#e0c7ff}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎬 视频生成 + 文字生音频 工作台</h1>
+  <div class="sub">上方：上传录音(wav)+文本(txt) 渲染抖音风格卡拉OK竖屏视频。下方：输入文本调用 7860 上的 DOTS 语音克隆生成配音，并可直接送入视频流水线。</div>
+
+  <!-- 大模型状态条（联动） -->
+  <div class="dotsbar" id="dotsBar" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:13px">
+    <span id="dotsDot" style="width:10px;height:10px;border-radius:50%;background:#666;flex:0 0 auto"></span>
+    <span id="dotsState" style="color:var(--sub)">检测大模型状态…</span>
+    <div style="flex:1;min-width:200px">
+      <div style="height:14px;background:var(--panel2);border:1px solid var(--line);border-radius:7px;overflow:hidden">
+        <div id="dotsProg" style="height:100%;width:0%;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .4s ease"></div>
+      </div>
+      <div id="dotsLog" style="margin-top:4px;color:var(--sub);font-family:ui-monospace,Consolas,monospace;font-size:11px;white-space:pre-wrap;word-break:break-all"></div>
+    </div>
+    <label class="chk" title="关闭/刷新网页时自动关闭 Dots.tts 大模型">
+      <input type="checkbox" id="linkDots" checked /> 关网页关模型
+    </label>
+    <button class="mini" id="dotsStopBtn">🛑 关闭模型</button>
+  </div>
+
+  <!-- ============ 视频生成 ============ -->
+  <div class="panel">
+    <div class="phead">① 视频生成（录音 + 文本）</div>
+    <div class="row">
+      <div class="drop" id="dropWav">
+        <button type="button" class="clr" id="clrWav" title="取消选择">✕</button>
+        <div class="ic">🎙️</div>
+        <div><b>录音文件 (wav)</b></div>
+        <div class="nm" id="nmWav">点击或拖拽到这里</div>
+        <input type="file" id="fileWav" accept=".wav,audio/*" />
+      </div>
+      <div class="drop" id="dropTxt">
+        <button type="button" class="clr" id="clrTxt" title="取消选择">✕</button>
+        <div class="ic">📝</div>
+        <div><b>文本文件 (txt)</b></div>
+        <div class="nm" id="nmTxt">点击或拖拽到这里</div>
+        <input type="file" id="fileTxt" accept=".txt,text/*" />
+      </div>
+    </div>
+
+    <label class="fld">生成选项</label>
+    <div class="opts">
+      <span class="chk">随机种子 seed <input type="number" id="seed" value="2" /></span>
+      <span class="chk"><input type="checkbox" id="full" /> 整段全片</span>
+      <span class="chk"><input type="checkbox" id="skipHeader" /> 跳过开头表头</span>
+      <span class="chk">时长(秒, 留空=整段全片) <input type="number" id="dur" placeholder="整段" min="1" /></span>
+      <span class="chk">画质 crf <input type="number" id="crf" value="20" /></span>
+    </div>
+
+    <div style="margin-top:14px">
+      <button class="go" id="btn">▶ 生成视频</button>
+      <button class="go go2" id="stopBtn" disabled>⏹ 停止</button>
+      <span class="hint" id="status">就绪</span>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="bar"><div class="fill" id="fill">0%</div></div>
+    <div class="meta">
+      <span>状态：<b id="mStat">空闲</b></span>
+      <span>速度：<b id="mSpeed">—</b></span>
+      <span>剩余：<b id="mEta">—</b></span>
+      <span>进度：<b id="mPct">0%</b></span>
+    </div>
+    <div id="log" style="margin-top:12px"></div>
+    <div class="hint" id="dlHint"></div>
+    <div class="outbox" id="outBox">
+      <span>输出路径：</span><code id="outPath" title="点击打开所在文件夹"></code>
+      <button class="mini" id="openOut">📂 打开文件夹</button>
+    </div>
+  </div>
+
+  <!-- ============ 文字生视频 (TTS) ============ -->
+  <div class="panel" id="ttsPanel">
+    <div class="phead t">② 文字生视频（AI 配音）</div>
+    <div class="sub" style="margin-bottom:8px">输入文字，由语音引擎合成配音。生成后点「🎬 生成视频」可直接送入上方视频流水线（整体流程：文本 → 配音 → 视频）。</div>
+    <div id="noEngineTip" style="display:none;margin:0 0 14px;padding:14px 16px;
+         border-radius:14px;border:1px solid rgba(255,190,120,.45);
+         background:linear-gradient(135deg,rgba(120,70,30,.38),rgba(90,50,25,.30));
+         color:#ffe6c4;font-size:13px;line-height:1.9">
+      <b style="font-size:14px">尚未安装「语音引擎包」，AI 配音功能暂不可用</b><br>
+      这不影响你使用视频功能 —— 你可以在上方 <b>① 直接上传已有的音频 + 文稿</b> 出片。<br>
+      想要 AI 配音？请到网盘下载 <b>【语音引擎包】</b>，解压后回到本程序目录，
+      双击 <b>【2】连接语音引擎.bat</b> 即可自动连上。
+    </div>
+    <label class="fld">音色库 · Voice（也可拖入自定义参考声音，见下方）</label>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <select id="voiceSel" class="sel" style="flex:1;max-width:280px"><option>加载中…</option></select>
+      <button class="mini" id="playVoice" title="试听选中的音色">▶ 试听音色</button>
+      <audio id="voiceAudio" style="display:none;height:36px"></audio>
+    </div>
+
+    <label class="fld">参考声音（可拖入自定义音色，覆盖上方音色库）</label>
+    <div class="drop" id="dropRef">
+      <button type="button" class="clr" id="clrRef" title="清除参考">✕</button>
+      <div class="ic">🎧</div>
+      <div><b>参考声音 (wav / mp3 / m4a)</b></div>
+      <div class="nm" id="nmRef">留空则使用上方音色库</div>
+      <input type="file" id="fileRef" accept="audio/*" />
+    </div>
+    <div id="refPlayer" class="ref-player" style="display:none">
+      <audio id="refAudio" controls style="width:100%;height:36px"></audio>
+      <div id="refDur" style="font-size:12px;margin-top:6px;color:var(--sub)"></div>
+    </div>
+    <label class="fld">参考台词（克隆参考声音的对应文本，建议填写以提升相似度）</label>
+    <textarea id="refText" class="ta" style="min-height:56px" placeholder="参考声音里说的是什么？填写它能显著提升克隆音色的相似度…"></textarea>
+
+    <label class="fld">待合成文本 · Text（可拖入 .txt 文件）</label>
+    <textarea id="ttsText" class="ta" placeholder="输入要合成配音的文字，或拖入 .txt 文件…" 
+      ondragover="event.preventDefault();this.style.borderColor='var(--acc2)'"
+      ondragleave="this.style.borderColor=''"
+      ondrop="event.preventDefault();this.style.borderColor='';const f=event.dataTransfer.files[0];if(f){const r=new FileReader();r.onload=e=>{this.value=e.target.result;this.style.borderColor='var(--ok)';setTimeout(()=>this.style.borderColor='',1000);};r.readAsText(f);}"
+    ></textarea>
+
+    <label class="fld">合成参数</label>
+    <div class="opts">
+      <span class="chk">Num Steps <input type="number" id="ttsSteps" value="4" min="1" max="32" title="快速版 MF 推荐 4；质量版 SOAR 推荐 10" /></span>
+      <span class="chk">Guidance <input type="number" id="ttsGuide" value="1.2" step="0.1" min="1" max="3" /></span>
+      <span class="chk">语速 <input type="number" id="ttsSpeed" value="1.0" step="0.1" min="0.5" max="2" /></span>
+      <span class="chk">停顿上限 <input type="number" id="ttsPause" value="0.3" step="0.05" min="0" max="1.5" /></span>
+      <span class="chk">Seed <input type="number" id="ttsSeed" value="42" /></span>
+      <span class="chk"><input type="checkbox" id="ttsNorm" /> Normalize Text</span>
+    </div>
+
+    <div style="margin-top:14px">
+      <button class="go" id="ttsBtn">🔊 生成音频</button>
+      <button class="go go2" id="ttsToVideo" disabled>🎬 生成视频</button>
+      <button class="go" id="ttsStopBtn" style="background:#8a2f2f;color:#fff" disabled>⏹ 停止</button>
+      <span class="hint" id="ttsStatus">就绪</span>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="bar"><div class="fill" id="ttsFill">0%</div></div>
+    <div class="meta">
+      <span>状态：<b id="ttsMStat">空闲</b></span>
+      <span>进度：<b id="ttsMPct">0%</b></span>
+    </div>
+    <div id="ttsLog" style="margin-top:12px"></div>
+    <div class="hint" id="ttsPlayer"></div>
+    <div class="outbox" id="ttsOutBox">
+      <span>输出路径：</span><code id="ttsOutPath" title="点击打开所在文件夹"></code>
+      <button class="mini" id="ttsOpenOut">📂 打开文件夹</button>
+    </div>
+  </div>
+
+  <!-- 缓存管理 -->
+  <div class="panel" style="padding:12px 16px">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--sub)">
+      <span>📦 缓存：</span>
+      <span id="cacheInfo">加载中…</span>
+      <code id="cacheDir" style="font-size:11px;color:var(--sub);background:#0a0c10;padding:3px 6px;border-radius:4px;border:1px solid var(--line)"></code>
+      <button class="mini" id="clearCache">🗑 清理缓存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+window.onerror=function(msg,url,line,col,err){
+  var d=document.createElement('div');
+  d.style.cssText='position:fixed;top:0;left:0;right:0;background:#ff6b6b;color:#fff;padding:10px;font-size:13px;z-index:9999;font-family:monospace;white-space:pre-wrap';
+  d.textContent='JS错误: '+msg+' (行:'+line+') '+(err&&err.stack?err.stack:'');
+  document.body.appendChild(d);
+};
+const $ = id => document.getElementById(id);
+let wavFile=null, txtFile=null, refFile=null, es=null, esTts=null, lastTtsJob=null, lastTtsText="";
+
+/* ---------- 文件拖拽 + 取消（视频区） ---------- */
+function bindDrop(dropId, fileId, nmId, setFn){
+  const drop=$(dropId), input=$(fileId);
+  drop.onclick=()=>input.click();
+  input.onchange=e=>{ if(input.files[0]) setFn(input.files[0]); };
+  ['dragover','dragenter'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('have');}));
+  ['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('have');}));
+  drop.addEventListener('drop',e=>{ const f=e.dataTransfer.files[0]; if(f) setFn(f); });
+}
+function setWav(f){ wavFile=f; $('nmWav').textContent=f.name; $('dropWav').classList.add('have'); }
+function setTxt(f){ txtFile=f; $('nmTxt').textContent=f.name; $('dropTxt').classList.add('have'); }
+function clearFile(which){
+  if(which==='wav'){ wavFile=null; $('fileWav').value=''; $('nmWav').textContent='点击或拖拽到这里'; $('dropWav').classList.remove('have'); }
+  else { txtFile=null; $('fileTxt').value=''; $('nmTxt').textContent='点击或拖拽到这里'; $('dropTxt').classList.remove('have'); }
+}
+$('clrWav').onclick=e=>{ e.stopPropagation(); clearFile('wav'); };
+$('clrTxt').onclick=e=>{ e.stopPropagation(); clearFile('txt'); };
+bindDrop('dropWav','fileWav','nmWav',setWav);
+bindDrop('dropTxt','fileTxt','nmTxt',setTxt);
+
+/* ---------- 参考声音拖拽 + 取消（TTS 区） ---------- */
+let refAudioUrl=null;
+function setRef(f){
+  refFile=f; $('nmRef').textContent=f.name; $('dropRef').classList.add('have');
+  if(refAudioUrl){ URL.revokeObjectURL(refAudioUrl); }
+  refAudioUrl=URL.createObjectURL(f);
+  $('refAudio').src=refAudioUrl;
+  $('refPlayer').style.display='block';
+  // 读取参考音频时长并提示
+  $('refAudio').onloadedmetadata=()=>{
+    const sec=$('refAudio').duration;
+    const ok=sec<=60;
+    $('refDur').textContent=(sec>0?'时长 '+sec.toFixed(1)+'s · ':'')+(ok?'可用':'⚠️ 超过60秒，DOTS 可能报错');
+    $('refDur').style.color=ok?'var(--ok)':'var(--err)';
+  };
+}
+function clearRef(){
+  refFile=null; $('fileRef').value=''; $('nmRef').textContent='留空则使用上方音色库'; $('dropRef').classList.remove('have');
+  if(refAudioUrl){ URL.revokeObjectURL(refAudioUrl); refAudioUrl=null; }
+  $('refAudio').src=''; $('refPlayer').style.display='none';
+  $('refDur').textContent=''; 
+}
+$('clrRef').onclick=e=>{ e.stopPropagation(); clearRef(); };
+bindDrop('dropRef','fileRef','nmRef',setRef);
+
+/* ---------- 打开输出文件夹 ---------- */
+function openFolder(path){
+  if(!path) return;
+  // 去掉"（尚未生成）"后缀，传目录而非不存在的文件
+  path = path.replace(/（尚未生成）.*$/, '').replace(/[/\\]+$/, '');
+  if(!path) return;
+  fetch('/api/open_folder?path='+encodeURIComponent(path)).catch(()=>{});
+}
+// 输出路径点击 / 打开文件夹按钮（顶层绑定，随时可用）
+$('openOut').onclick=()=>{ const p=$('outPath').textContent; if(p) openFolder(p); };
+$('ttsOpenOut').onclick=()=>{ const p=$('ttsOutPath').textContent; if(p) openFolder(p); };
+$('outPath').onclick=()=>{ const p=$('outPath').textContent; if(p) openFolder(p); };
+$('ttsOutPath').onclick=()=>{ const p=$('ttsOutPath').textContent; if(p) openFolder(p); };
+
+/* ---------- 停止按钮 ---------- */
+$('stopBtn').onclick=()=>{
+  if(!curJob) return;
+  fetch('/api/stop/'+curJob).then(r=>r.json()).then(d=>{
+    if(!d.ok && d.error) log('停止失败: '+d.error,'t-err');
+  }).catch(()=>{});
+};
+$('ttsStopBtn').onclick=()=>{
+  if(!curTtsJob) return;
+  fetch('/api/stop/'+curTtsJob).then(r=>r.json()).then(d=>{
+    if(!d.ok && d.error) ttsLog('停止失败: '+d.error,'t-err');
+  }).catch(()=>{});
+};
+
+/* ---------- 日志 ---------- */
+function log(msg, cls){
+  const d=document.createElement('div');
+  if(cls) d.innerHTML=`<span class="tag ${cls}">${cls}</span>`;
+  d.appendChild(document.createTextNode(msg));
+  $('log').appendChild(d); $('log').scrollTop=$('log').scrollHeight;
+}
+function ttsLog(msg, cls){
+  const d=document.createElement('div');
+  if(cls) d.innerHTML=`<span class="tag ${cls}">${cls}</span>`;
+  d.appendChild(document.createTextNode(msg));
+  $('ttsLog').appendChild(d); $('ttsLog').scrollTop=$('ttsLog').scrollHeight;
+}
+function b64(arr){
+  let s=''; const bytes=new Uint8Array(arr); const chunk=0x8000;
+  for(let i=0;i<bytes.length;i+=chunk){ s+=String.fromCharCode.apply(null,bytes.subarray(i,i+chunk)); }
+  return btoa(s);
+}
+
+/* ---------- 视频生成（被两个按钮共用） ---------- */
+let curJob=null, curTtsJob=null;
+function startVideo(payload){
+  $('btn').disabled=true; $('ttsToVideo').disabled=true;
+  $('stopBtn').disabled=false;
+  $('fill').style.width='0%'; $('fill').textContent='0%'; $('mPct').textContent='0%';
+  $('log').innerHTML=''; $('dlHint').innerHTML='';
+  $('status').textContent='生成中…'; $('mStat').textContent='空闲';
+
+  // 用 FormData 上传（multipart/form-data），不走 base64，解决大文件损坏
+  const fd = new FormData();
+  if(payload.wav){
+    // 直接传 File 对象（浏览器原生二进制上传）
+    fd.append('wav', payload.wav, payload.wav_name||'audio.wav');
+  } else if(payload.wav_b64){
+    // 兼容 TTS→视频串联（base64 转 blob）
+    const bin = atob(payload.wav_b64);
+    const ua = new Uint8Array(bin.length);
+    for(let i=0;i<bin.length;i++) ua[i]=bin.charCodeAt(i);
+    fd.append('wav', new Blob([ua], {type:'audio/wav'}), payload.wav_name||'audio.wav');
+  }
+  if(payload.tts_job) fd.append('tts_job', payload.tts_job);
+  fd.append('txt', payload.txt_text||'');
+  fd.append('wav_name', payload.wav_name||'audio.wav');
+  fd.append('txt_name', payload.txt_name||'text.txt');
+  fd.append('seed', payload.seed!=null?payload.seed:2);
+  fd.append('full', payload.full?'true':'false');
+  fd.append('skip_header', payload.skip_header?'true':'false');
+  fd.append('dur', payload.dur!=null?payload.dur:'');
+  fd.append('crf', payload.crf||'20');
+
+  fetch('/api/generate',{method:'POST',body:fd})
+    .then(r=>r.json()).then(j=>{
+      if(j.error){ log('提交失败: '+j.error,'t-err'); $('btn').disabled=false; if(lastTtsJob)$('ttsToVideo').disabled=false; $('stopBtn').disabled=true; $('status').textContent='错误'; return; }
+      log('已提交任务，开始生成 (job '+j.job_id.slice(0,8)+')','t-run');
+      curJob=j.job_id;
+      openStream(j.job_id);
+    }).catch(e=>{ log('网络错误: '+e.message,'t-err'); $('btn').disabled=false; if(lastTtsJob)$('ttsToVideo').disabled=false; $('stopBtn').disabled=true; $('status').textContent='错误'; });
+}
+
+$('btn').onclick=async()=>{
+  if(!wavFile||!txtFile){ alert('请先上传录音(wav)和文本(txt)'); return; }
+  const txtText=await txtFile.text();
+  const durVal=$('dur').value.trim();
+  startVideo({
+    wav: wavFile,  // 直接传 File 对象
+    wav_name:wavFile.name, txt_name:txtFile.name, txt_text:txtText,
+    seed:+$('seed').value, full:$('full').checked,
+    skip_header:$('skipHeader').checked, dur: durVal==='' ? null : +durVal,
+    crf:$('crf').value
+  });
+};
+
+function openStream(job){
+  if(es) es.close();
+  es=new EventSource('/api/events?job='+job);
+  es.onmessage=ev=>{
+    let d; try{ d=JSON.parse(ev.data); }catch{ return; }
+    if(d.type==='progress'){
+      const p=Math.round(d.pct);
+      $('fill').style.width=p+'%'; $('fill').textContent=p+'%'; $('mPct').textContent=p+'%';
+      $('mStat').textContent='渲染中';
+      $('mSpeed').textContent= d.info&&d.info.speed ? (d.info.speed.toFixed(2)+'x / '+Math.round(d.info.fps||0)+'fps') : '—';
+      $('mEta').textContent= (d.info&&d.info.eta!=null) ? (Math.ceil(d.info.eta)+'s') : '—';
+    } else if(d.type==='log'){
+      log(d.msg);
+    } else if(d.type==='done'){
+      $('mStat').textContent='完成'; $('status').textContent='完成 ✅';
+      log('✅ 生成完成: '+d.out,'t-ok');
+      $('dlHint').innerHTML='下载：<a class="dl" href="'+d.url+'" download>'+d.out+'</a>';
+      if(d.out_path){ $('outPath').textContent=d.out_path; $('outPath').classList.remove('empty'); }
+      $('btn').disabled=false; if(lastTtsJob)$('ttsToVideo').disabled=false; $('stopBtn').disabled=true; es.close();
+    } else if(d.type==='stopped'){
+      $('mStat').textContent='已停止'; $('status').textContent='已停止 ⏹';
+      log('⏹ 任务已停止','t-run');
+      $('btn').disabled=false; if(lastTtsJob)$('ttsToVideo').disabled=false; $('stopBtn').disabled=true; es.close();
+    } else if(d.type==='error'){
+      $('mStat').textContent='错误'; $('status').textContent='错误';
+      log('❌ '+d.msg,'t-err'); $('btn').disabled=false; if(lastTtsJob)$('ttsToVideo').disabled=false; $('stopBtn').disabled=true; es.close();
+    }
+  };
+  es.onerror=()=>{};
+}
+
+/* ---------- 大模型状态联动 ---------- */
+/* 语音引擎缺失时：整块 TTS 区置灰 + 显示引导，绝不弹错误 */
+var _engineMissing=null;
+function setEngineMissing(miss){
+  if(_engineMissing===miss) return;      // 状态未变则不重复操作
+  _engineMissing=miss;
+  var tip=$('noEngineTip'), panel=$('ttsPanel');
+  if(tip) tip.style.display = miss ? 'block' : 'none';
+  if(panel){
+    var els=panel.querySelectorAll('input,select,textarea,button');
+    for(var i=0;i<els.length;i++){
+      var e=els[i];
+      if(e.id==='ttsStopBtn') continue;
+      if(miss){
+        if(!e.hasAttribute('data-owndis')) e.setAttribute('data-owndis', e.disabled?'1':'0');
+        e.disabled=true;
+      }else{
+        if(e.getAttribute('data-owndis')==='0') e.disabled=false;
+        e.removeAttribute('data-owndis');
+      }
+    }
+    panel.style.opacity = miss ? '0.72' : '1';
+  }
+}
+
+function refreshDots(){
+  fetch('/api/dots_status',{cache:'no-store'}).then(r=>r.json()).then(d=>{
+    const dot=$('dotsDot'), st=$('dotsState');
+    const p=Math.max(0,Math.min(100,+(d.progress||0)));
+    $('dotsProg').style.width=p+'%';
+    if(d.state==='not_installed'){
+      dot.style.background='#c9a227';
+      st.textContent='⚠ 未安装语音引擎 · 视频功能不受影响';
+      st.style.color='#ffd98a';
+      $('dotsProg').style.width='0%';
+      setEngineMissing(true);
+      $('dotsLog').textContent='';
+      return;
+    }
+    setEngineMissing(false);
+    if(d.state==='ready'){
+      dot.style.background='var(--ok)';
+      st.textContent='✅ 语音引擎已就绪（端口 '+(d.port||7860)+'）';
+      st.style.color='var(--ok)';
+      $('dotsProg').style.background='var(--ok)';
+    } else if(d.state==='starting'){
+      dot.style.background='var(--acc)';
+      st.textContent='⏳ 语音引擎加载中… '+p+'%'+(d.progress_desc?' · '+d.progress_desc:'');
+      st.style.color='var(--acc)';
+      $('dotsProg').style.background='linear-gradient(90deg,var(--acc),var(--acc2))';
+    } else {
+      dot.style.background='var(--err)';
+      st.textContent='❌ 语音引擎未启动 —— 请先双击语音引擎包里的启动器';
+      st.style.color='var(--err)';
+      $('dotsProg').style.background='var(--err)';
+    }
+    $('dotsLog').textContent=(d.log_tail||'').split('\n').slice(-3).join('\n');
+  }).catch(()=>{});
+}
+refreshDots();
+setInterval(refreshDots, 3000);
+
+// 手动关闭模型
+$('dotsStopBtn').onclick=()=>{
+  if(!confirm('确认关闭 Dots.tts 大模型？关闭后需重新加载才能使用文字生音频。')) return;
+  fetch('/api/dots_stop',{cache:'no-store'}).then(r=>r.json()).then(d=>{
+    alert(d.killed&&d.killed.length?('已关闭 '+d.killed.length+' 个进程'):'未发现可关闭的进程');
+    refreshDots();
+  }).catch(e=>alert('网络错误: '+e.message));
+};
+
+// 关网页 = 关模型（beforeunload 尽力通知；刷新也会触发，可取消勾选）
+window.addEventListener('beforeunload', ()=>{
+  if($('linkDots').checked){
+    try{ navigator.sendBeacon && navigator.sendBeacon('/api/dots_stop'); }catch(e){}
+  }
+});
+
+/* ---------- TTS：载入音色 ---------- */
+fetch('/api/tts_voices',{cache:'no-store'}).then(r=>r.json()).then(j=>{
+  const sel=$('voiceSel'); sel.innerHTML='';
+  const vs=(j.voices||[]);
+  if(!vs.length){ sel.innerHTML='<option>未找到音色 —— 请先安装并连接语音引擎</option>'; return; }
+  vs.forEach(v=>{
+    const o=document.createElement('option'); o.value=v.name; o.textContent=v.name; sel.appendChild(o);
+  });
+  if([...sel.options].some(o=>o.value==='锣')) sel.value='锣';
+}).catch(e=>{ $('voiceSel').innerHTML='<option>加载失败：'+(e.message||'网络错误')+'</option>'; });
+
+/* ---------- 缓存管理 ---------- */
+function loadCacheInfo(){
+  fetch('/api/cache_info',{cache:'no-store'}).then(r=>r.json()).then(d=>{
+    $('cacheInfo').textContent = d.count+' 个任务 / '+d.size_mb+' MB';
+    $('cacheDir').textContent = d.dir;
+  }).catch(()=>{});
+}
+loadCacheInfo();
+$('clearCache').onclick=()=>{
+  if(!confirm('确认清理所有上传缓存？这会删除 web_jobs 下所有临时文件（不影响已生成的视频）。')) return;
+  fetch('/api/clear_cache').then(r=>r.json()).then(d=>{
+    if(d.ok){ loadCacheInfo(); alert('已清理 '+d.cleared+' 个任务缓存'); }
+    else alert('清理失败: '+(d.error||'未知错误'));
+  }).catch(e=>alert('网络错误: '+e.message));
+};
+$('cacheDir').onclick=()=>{ const p=$('cacheDir').textContent; if(p) openFolder(p); };
+
+/* ---------- 音色库试听 ---------- */
+let voiceAudioUrl=null;
+$('playVoice').onclick=()=>{
+  const v=$('voiceSel').value;
+  if(!v || v==='加载中…'){ alert('请先选择音色'); return; }
+  if(voiceAudioUrl){ URL.revokeObjectURL(voiceAudioUrl); }
+  // 直接用流式 URL（不下载到内存）
+  $('voiceAudio').src='/api/voice_audio?name='+encodeURIComponent(v);
+  $('voiceAudio').style.display='inline-block';
+  $('voiceAudio').play().catch(()=>{});
+};
+$('voiceAudio').onended=()=>{ $('voiceAudio').style.display='none'; };
+
+/* ---------- 默认输出目录 ---------- */
+fetch('/api/output_dirs',{cache:'no-store'}).then(r=>r.json()).then(d=>{
+  const vd=d.video_dir, td=d.tts_dir;
+  $('outPath').textContent=(vd?vd+'\\':'')+'（尚未生成）';
+  $('outPath').dataset.dir=vd||'';
+  $('outPath').classList.add('empty');
+  $('ttsOutPath').textContent=(td?td+'\\':'')+'（尚未生成）';
+  $('ttsOutPath').dataset.dir=td||'';
+  $('ttsOutPath').classList.add('empty');
+}).catch(()=>{});
+
+/* ---------- TTS：生成音频 ---------- */
+$('ttsBtn').onclick=()=>{
+  const text=$('ttsText').value.trim();
+  if(!text){ alert('请输入待合成文本'); return; }
+  // 参考声音使用校验：
+  if(refFile && !$('refText').value.trim()){
+    alert('已拖入参考音频，请务必在下方「参考台词」填写参考音频实际朗读的内容（否则 DOTS 会拒绝合成）。');
+    return;
+  }
+  if(!refFile && $('refText').value.trim()){
+    alert('已填写参考台词但没有拖入参考音频——仅填台词不会生效。请在「参考声音」区拖入音频，或清空参考台词使用上方音色库。');
+    return;
+  }
+  if(refFile && $('refAudio').duration>60){
+    alert('参考音频超过 60 秒，DOTS 会报 max_generate_length 错误。请换一个 ≤60 秒的参考音频（建议 10~30 秒）。');
+    return;
+  }
+  $('ttsBtn').disabled=true; $('ttsToVideo').disabled=true; $('ttsStatus').textContent='合成中…';
+  $('ttsStopBtn').disabled=false;
+  $('ttsFill').style.width='0%'; $('ttsFill').textContent='0%'; $('ttsMPct').textContent='0%';
+  $('ttsLog').innerHTML=''; $('ttsPlayer').innerHTML=''; $('ttsMStat').textContent='合成中';
+  const payload={ text, voice:$('voiceSel').value,
+    num_steps:+$('ttsSteps').value, guidance_scale:+$('ttsGuide').value,
+    speed:+$('ttsSpeed').value, max_pause:+$('ttsPause').value,
+    seed:+$('ttsSeed').value, normalize:$('ttsNorm').checked };
+  if(refFile){
+    payload.ref_text=$('refText').value.trim();
+    payload.ref_name=refFile.name;
+    refFile.arrayBuffer().then(buf=>{ payload.ref_audio_b64=b64(buf); sendTts(payload); });
+  } else {
+    sendTts(payload);
+  }
+};
+function sendTts(payload){
+  fetch('/api/tts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+    .then(r=>r.json()).then(j=>{
+      if(j.error){ ttsLog('提交失败: '+j.error,'t-err'); $('ttsBtn').disabled=false; $('ttsStatus').textContent='错误'; $('ttsStopBtn').disabled=true; return; }
+      ttsLog('已提交 TTS 任务 (job '+j.job_id.slice(0,8)+')'+(refFile?' · 自定义参考音色':''),'t-run');
+      curTtsJob=j.job_id;
+      openTtsStream(j.job_id);
+    }).catch(e=>{ ttsLog('网络错误: '+e.message,'t-err'); $('ttsBtn').disabled=false; $('ttsStatus').textContent='错误'; $('ttsStopBtn').disabled=true; });
+}
+
+function openTtsStream(job){
+  if(esTts) esTts.close();
+  esTts=new EventSource('/api/events?job='+job);
+  esTts.onmessage=ev=>{
+    let d; try{ d=JSON.parse(ev.data); }catch{ return; }
+    if(d.type==='progress'){
+      const p=Math.round(d.pct);
+      $('ttsFill').style.width=p+'%'; $('ttsFill').textContent=p+'%'; $('ttsMPct').textContent=p+'%';
+      $('ttsMStat').textContent='合成中';
+    } else if(d.type==='log'){
+      ttsLog(d.msg);
+    } else if(d.type==='done' && d.kind==='tts'){
+      lastTtsJob=job; lastTtsText=$('ttsText').value;
+      $('ttsMStat').textContent='完成'; $('ttsStatus').textContent='完成 ✅';
+      ttsLog('✅ 音频完成: '+d.wav_name+' ('+(d.duration!=null?d.duration.toFixed(2):'?')+'s)','t-ok');
+      $('ttsPlayer').innerHTML='<audio controls src="'+d.url+'" style="width:100%;margin-top:8px"></audio> 下载：<a class="dl" href="'+d.url+'" download>'+d.wav_name+'</a>';
+      if(d.out_path){ $('ttsOutPath').textContent=d.out_path; $('ttsOutPath').classList.remove('empty'); }
+      $('ttsBtn').disabled=false; $('ttsToVideo').disabled=false; $('ttsStopBtn').disabled=true; esTts.close();
+    } else if(d.type==='stopped'){
+      $('ttsMStat').textContent='已停止'; $('ttsStatus').textContent='已停止 ⏹';
+      ttsLog('⏹ 任务已停止','t-run'); $('ttsBtn').disabled=false; $('ttsStopBtn').disabled=true; esTts.close();
+    } else if(d.type==='error'){
+      $('ttsMStat').textContent='错误'; $('ttsStatus').textContent='错误';
+      ttsLog('❌ '+d.msg,'t-err'); $('ttsBtn').disabled=false; $('ttsStopBtn').disabled=true; esTts.close();
+    }
+  };
+  esTts.onerror=()=>{};
+}
+
+/* ---------- TTS → 视频（整体框架串联） ---------- */
+$('ttsToVideo').onclick=()=>{
+  if(!lastTtsJob){ alert('请先生成音频'); return; }
+  const dv=$('dur').value.trim();
+  startVideo({ tts_job:lastTtsJob, txt_text:lastTtsText,
+    seed:+$('seed').value, full:$('full').checked,
+    skip_header:$('skipHeader').checked, dur: dv==='' ? null : +dv, crf:$('crf').value });
+  log('（音源：TTS 配音「'+$('voiceSel').value+'」）','t-run');
+};
+</script>
+<script>
+/* 仙女棒光标闪粒 —— 纯视觉装饰，不涉及任何接口/端口/数据 */
+(function(){
+  var last=0;
+  var colors=['#c084fc','#7c9cff','#f9a8d4','#ffd86b','#ffffff'];
+  var glyphs=['\u2726','\u2727','\u22c6','\u2728','\u00b7'];
+  document.addEventListener('mousemove',function(e){
+    var now=Date.now(); if(now-last<45) return; last=now;
+    var s=document.createElement('div');
+    s.className='fairy-spark';
+    s.textContent=glyphs[(Math.random()*glyphs.length)|0];
+    s.style.left=e.clientX+'px';
+    s.style.top=e.clientY+'px';
+    s.style.color=colors[(Math.random()*colors.length)|0];
+    s.style.fontSize=(8+Math.random()*10)+'px';
+    document.body.appendChild(s);
+    setTimeout(function(){ if(s&&s.parentNode) s.parentNode.removeChild(s); },800);
+  },{passive:true});
+})();
+</script>
+</body>
+</html>

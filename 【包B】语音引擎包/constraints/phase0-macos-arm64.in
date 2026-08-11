@@ -1,0 +1,17 @@
+# Phase 0 only: minimal MF inference dependencies for Python 3.12 arm64.
+# This is an experiment input, not the Phase 2 release lock.
+torch==2.8.0
+torchaudio==2.8.0
+transformers==4.57.0
+huggingface-hub==0.36.0
+loguru==0.7.3
+langcodes[data]==3.5.0
+lingua-language-detector==2.1.1
+einops==0.8.1
+librosa==0.11.0
+soundfile==0.13.1
+numpy==2.2.6
+pydantic==2.12.5
+PyYAML==6.0.3
+safetensors==0.8.0rc0
+torchdiffeq==0.2.5

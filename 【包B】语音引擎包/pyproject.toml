@@ -1,0 +1,107 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dots.tts"
+version = "0.1.0"
+description = "dots.tts: a fully continuous autoregressive TTS system with self-corrective alignment and CFG-aware MeanFlow distillation."
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+license = { text = "Apache-2.0" }
+authors = [{ name = "dots.tts Team" }]
+keywords = [
+    "text-to-speech",
+    "tts",
+    "speech-synthesis",
+    "autoregressive",
+    "flow-matching",
+    "meanflow",
+    "diffusion",
+    "voice-cloning",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Multimedia :: Sound/Audio :: Speech",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "torch>=2.8.0",
+    "torchaudio>=2.8.0",
+    "transformers>=4.57.0",
+    "huggingface-hub",
+    "loguru",
+    "langcodes[data]",
+    "gradio",
+    "einops",
+    "librosa>=0.11.0",
+    "soundfile>=0.13.1",
+    "numpy>=2.2.6",
+    "pydantic>=2.12.5,<3",
+    "PyYAML>=6.0.3",
+    "safetensors>=0.8.0rc0",
+    "torchdiffeq",
+    "tqdm",
+    "lingua-language-detector",
+    "WeTextProcessing",
+]
+
+[project.optional-dependencies]
+full = [
+    "accelerate>=1.12.0",
+    "tensorboard>=2.20.0",
+    "ruff>=0.15.12",
+]
+
+[project.scripts]
+"dots.tts" = "dots_tts.cli:main"
+
+[project.urls]
+# TODO: fill in before public launch
+Homepage = "https://github.com/<to-be-filled>/dots.tts"
+Repository = "https://github.com/<to-be-filled>/dots.tts"
+Issues = "https://github.com/<to-be-filled>/dots.tts/issues"
+
+[tool.setuptools]
+include-package-data = false
+
+[tool.setuptools.package-dir]
+"" = "src"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["dots_tts*"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 88
+src = ["src"]
+extend-exclude = ["__pycache__"]
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "F",
+    "I",
+]
+ignore = [
+    "E501",
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["dots_tts"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "lf"

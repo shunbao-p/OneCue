@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "target": "aarch64-apple-darwin",
+  "minimum_macos": "11.0",
+  "source_date_epoch": 1781664539,
+  "python": {
+    "project": "astral-sh/python-build-standalone",
+    "release": "20260510",
+    "version": "3.13.13",
+    "asset": "cpython-3.13.13+20260510-aarch64-apple-darwin-install_only.tar.gz",
+    "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20260510/cpython-3.13.13%2B20260510-aarch64-apple-darwin-install_only.tar.gz",
+    "sha256": "1ad1ed518447005d4b6dfa16d4f847d45790e17e94e30164a0a6e6c79a99730f",
+    "license": "MPL-2.0 build project; runtime component licenses are contained in the archive",
+    "release_api_digest_verified": true
+  },
+  "build_python_packages": [
+    {
+      "name": "meson",
+      "version": "1.11.2",
+      "asset": "meson-1.11.2-py3-none-any.whl",
+      "url": "https://files.pythonhosted.org/packages/1d/c5/680527bdddf039807f22041882678b7f21d3380b4cdbc46abf2f24e2db6c/meson-1.11.2-py3-none-any.whl",
+      "sha256": "7e4f6e83fec83e3eaac928e058b073c7557b282c35b6a2024cea143a39926a39",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "ninja",
+      "version": "1.13.0",
+      "asset": "ninja-1.13.0-py3-none-macosx_10_9_universal2.whl",
+      "url": "https://files.pythonhosted.org/packages/3c/74/d02409ed2aa865e051b7edda22ad416a39d81a84980f544f8de717cab133/ninja-1.13.0-py3-none-macosx_10_9_universal2.whl",
+      "sha256": "fa2a8bfc62e31b08f83127d1613d10821775a0eb334197154c4d6067b7068ff1",
+      "license": "Apache-2.0"
+    }
+  ],
+  "ffmpeg_sources": [
+    {
+      "name": "ffmpeg",
+      "version": "8.1.2",
+      "asset": "ffmpeg-8.1.2.tar.xz",
+      "url": "https://ffmpeg.org/releases/ffmpeg-8.1.2.tar.xz",
+      "sha256": "464beb5e7bf0c311e68b45ae2f04e9cc2af88851abb4082231742a74d97b524c",
+      "license": "GPL-2.0-or-later when built with libx264",
+      "signature": "https://ffmpeg.org/releases/ffmpeg-8.1.2.tar.xz.asc",
+      "signing_fingerprint": "FCF986EA15E6E293A5644F10B4322F04D67658D8"
+    },
+    {
+      "name": "x264",
+      "version": "b35605ace3ddf7c1a5d67a2eb553f034aef41d55",
+      "asset": "x264-b35605ace3ddf7c1a5d67a2eb553f034aef41d55.tar.gz",
+      "url": "https://code.videolan.org/videolan/x264/-/archive/b35605ace3ddf7c1a5d67a2eb553f034aef41d55/x264-b35605ace3ddf7c1a5d67a2eb553f034aef41d55.tar.gz",
+      "sha256": "cd71a7515b0e9a012e1ac9b1f8415bebcaf6fc97d4db32286642ac4c0fbe24f9",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "name": "libass",
+      "version": "0.17.5",
+      "asset": "libass-0.17.5.tar.xz",
+      "url": "https://github.com/libass/libass/releases/download/0.17.5/libass-0.17.5.tar.xz",
+      "sha256": "2dca25c0e0c837ddf00b52011b3f82cac1e4ddd3ad018227806b0c2288864acc",
+      "license": "ISC"
+    },
+    {
+      "name": "freetype",
+      "version": "2.14.1",
+      "asset": "freetype-2.14.1.tar.xz",
+      "url": "https://download.savannah.gnu.org/releases/freetype/freetype-2.14.1.tar.xz",
+      "sha256": "32427e8c471ac095853212a37aef816c60b42052d4d9e48230bab3bdf2936ccc",
+      "license": "FTL or GPL-2.0-or-later"
+    },
+    {
+      "name": "fribidi",
+      "version": "1.0.16",
+      "asset": "fribidi-1.0.16.tar.xz",
+      "url": "https://github.com/fribidi/fribidi/releases/download/v1.0.16/fribidi-1.0.16.tar.xz",
+      "sha256": "1b1cde5b235d40479e91be2f0e88a309e3214c8ab470ec8a2744d82a5a9ea05c",
+      "license": "LGPL-2.1-or-later"
+    },
+    {
+      "name": "harfbuzz",
+      "version": "14.3.0",
+      "asset": "harfbuzz-14.3.0.tar.xz",
+      "url": "https://github.com/harfbuzz/harfbuzz/releases/download/14.3.0/harfbuzz-14.3.0.tar.xz",
+      "sha256": "16070d77cfc4ba1f1e7327e83bf9b3f55898081cabdb94e56a33e04fc8874eae",
+      "license": "MIT"
+    },
+    {
+      "name": "pkgconf",
+      "version": "3.0.5",
+      "asset": "pkgconf-3.0.5.tar.xz",
+      "url": "https://github.com/pkgconf/pkgconf/releases/download/pkgconf-3.0.5/pkgconf-3.0.5.tar.xz",
+      "sha256": "3acd3a8a3cce65a8d620321855d92fb602e026cbe8e13ee36bdec58483b59ace",
+      "license": "ISC"
+    }
+  ],
+  "ffmpeg_configure": [
+    "--arch=arm64",
+    "--target-os=darwin",
+    "--cc=clang",
+    "--enable-gpl",
+    "--enable-libx264",
+    "--enable-libass",
+    "--enable-zlib",
+    "--enable-static",
+    "--disable-shared",
+    "--disable-autodetect",
+    "--disable-doc",
+    "--disable-debug",
+    "--disable-ffplay",
+    "--pkg-config-flags=--static"
+  ],
+  "forbidden_configure": [
+    "--enable-nonfree",
+    "--enable-libfdk-aac"
+  ],
+  "external_distribution_gate": {
+    "developer_id_required": true,
+    "hardened_runtime_required": true,
+    "notarytool_credentials_required": true,
+    "local_build_without_credentials": "allowed-but-must-be-labeled-unsigned-unnotarized"
+  }
+}

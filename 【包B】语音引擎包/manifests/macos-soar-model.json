@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "model": "dots-tts-soar",
+  "source": "Phase 5 final release manifest from previously verified local model files",
+  "release_status": "phase5-final-release",
+  "target": "aarch64-apple-darwin",
+  "files": [
+    {"path": ".gitattributes", "size": 1570, "sha256": "34448b82c17d60fec9b65b1f093c115ddbaadc04beb1b0140b6bfed2e012a930"},
+    {"path": "README.md", "size": 8160, "sha256": "3f908474184378d8350d5fbfb8e0669f2019c610b71c4ba6891caf3d079a1701"},
+    {"path": "added_tokens.json", "size": 831, "sha256": "1268ec3933b675b8ff4ddf688f2a6088795a122da8693645bf00a1232c4c8422"},
+    {"path": "chat_template.jinja", "size": 2427, "sha256": "44d5f08f3f72b837eaad09f13a54c1f9f4eb58d75240334548b7fd52a5437fa5"},
+    {"path": "config.json", "size": 1933, "sha256": "d38bd9cff56c9744e33dc0ba62ca39b1ae6ab64561628f8de8132e5b565e9fa5"},
+    {"path": "latent_stats.pt", "size": 3197, "sha256": "313b13af56d659ecf869d5f854508fcf823c8f957aefc6bc05244991abd6ffe1"},
+    {"path": "llm_config.json", "size": 2727, "sha256": "ce378446b2a6353547ecb44652701ec8ef42610cdcd33f728719033a9d7bb8a1"},
+    {"path": "merges.txt", "size": 1671853, "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5"},
+    {"path": "model.safetensors", "size": 4396289197, "sha256": "2787e6d4fe0b27ac33d28072abcadef53802c841bff037f3ee1f6bb5e1d3a2ce"},
+    {"path": "speaker_encoder.safetensors", "size": 29150484, "sha256": "1cf3861c9dee79e4db34bd0b8a4155e68bed27a7c6274e168bb6ee4fed191c85"},
+    {"path": "special_tokens_map.json", "size": 1398, "sha256": "52aa5522bb1bce46f653935a856be7d0e006d1acbc881d608d57a8cb687339d7"},
+    {"path": "tokenizer.json", "size": 11423263, "sha256": "c16521f66774c7a4774e5303b7c8ec5c99830c0be5aef6c6edde3ca2a5e05dd0"},
+    {"path": "tokenizer_config.json", "size": 5886, "sha256": "5fec72f1ad92d8493770ebe6fbd8bf62645f0587bfa2b6e3e12d58c766b92096"},
+    {"path": "vocab.json", "size": 2776833, "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"},
+    {"path": "vocoder.safetensors", "size": 723585584, "sha256": "c0e45c08f480df67ac4c354b465355fcc7e2f6c8765263b6dfeddd1f4671c93d"}
+  ]
+}

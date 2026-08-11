@@ -1,0 +1,44 @@
+# Python and macOS generated files
+**/__pycache__/
+*.py[cod]
+*.pyo
+.DS_Store
+
+# Local logs, caches, temporary files, and generated media
+**/*.log
+**/.runtime/
+**/hf_download/
+**/tf_download/
+**/downloaded_data/
+**/tmp/
+**/outputs/
+**/成片/
+**/临时文件/
+**/日志/
+**/*.zip
+**/tests/evidence/**
+*.bat
+**/示范配音_*.wav
+
+# Bundled release runtimes and Windows-only environment
+**/runtime/
+**/wzf/
+
+# Bundled binary tools; source-mode users install FFmpeg separately
+**/bin/*
+!**/bin/.gitkeep
+
+# Model weights are downloaded from Hugging Face by scripts/download_macos_models.py
+**/pretrained_models/*
+!**/pretrained_models/
+!**/pretrained_models/README.md
+!**/pretrained_models/.gitkeep
+**/pretrained_models/**/model.safetensors
+**/pretrained_models/**/vocoder.safetensors
+**/pretrained_models/**/speaker_encoder.safetensors
+**/pretrained_models/**/prompt*.wav
+
+# Local planning/session artifacts are not part of the distributable project
+.codex/
+.omx/
+dialogue-docs/

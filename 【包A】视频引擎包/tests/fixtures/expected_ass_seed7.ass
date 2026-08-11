@@ -1,0 +1,17 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+YCbCr Matrix: TV.709
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: KT0,SimHei,128,&H0099EEFF,&H00333333,&H00000000,&H00000000,0,0,0,0,100,100,2,0,1,8,5,60,60,60,1
+Style: KT1,SimHei,128,&H00FFFFFF,&H00333333,&H00000000,&H00000000,0,0,0,0,100,100,2,0,1,8,5,60,60,60,1
+Style: KT2,SimHei,128,&H00B0D9FF,&H00333333,&H00000000,&H00000000,0,0,0,0,100,100,2,0,1,8,5,60,60,60,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:01.00,KT1,,0,0,0,,{\an5\move(326,1106,326,1016,0,180)\frz3.0\fad(70,160)\t(0,110,\fscx104\fscy104)\t(110,220,\fscx100\fscy100)}{\k50\fs148}你{\k50\fs148}好

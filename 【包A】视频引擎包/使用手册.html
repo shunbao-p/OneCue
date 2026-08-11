@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>【包A】视频引擎包 使用手册</title>
+<style>
+  :root{ --bg:#0e1116; --card:#161b22; --line:#2a313c; --txt:#e6edf3; --sub:#9aa7b4; --acc:#7c5cff; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;line-height:1.7}
+  .wrap{max-width:860px;margin:0 auto;padding:32px 20px 64px}
+  h1{font-size:26px;margin:0 0 6px}
+  h2{font-size:19px;margin:30px 0 10px;color:#fff;border-left:4px solid var(--acc);padding-left:10px}
+  .lead{color:var(--sub);margin:0 0 8px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:14px 0}
+  code{background:#0b0e13;border:1px solid var(--line);border-radius:6px;padding:1px 7px;color:#ffd479;font-size:13px}
+  .btns{display:flex;gap:12px;flex-wrap:wrap;margin:10px 0}
+  .b{flex:1;min-width:200px;background:#0b0e13;border:1px solid var(--line);border-radius:10px;padding:12px}
+  .b b{color:#fff}
+  ol,ul{margin:6px 0;padding-left:22px}
+  li{margin:4px 0}
+  .ok{color:#7ee787}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>【包A】视频引擎包 使用手册</h1>
+  <p class="lead">本地离线把会议录音 / 文稿转成带字幕竖版短视频。自带运行环境，无需联网、无需装 Python。</p>
+
+  <h2>一、系统要求</h2>
+  <div class="card"><ul>
+    <li>Windows 10 / 11 64 位</li>
+    <li>不需要显卡 / NVIDIA；普通办公电脑即可</li>
+    <li>不需要安装 Python（包内已自带运行环境）</li>
+  </ul></div>
+
+  <h2>二、启动（傻瓜三步）</h2>
+  <div class="card"><ol>
+    <li>解压本包到一个<b>纯英文路径</b>（例如 <code>D:\视频引擎包</code>）。</li>
+    <li>双击 <code>①开始使用.bat</code>：先自检，再启动本地网页并自动打开浏览器到 <code>http://127.0.0.1:8787</code>。</li>
+    <li>在网页里选“我的素材”中的录音/文稿，设区间，点生成。成片存到“成片”。</li>
+  </ol></div>
+
+  <h2>三、三个按钮</h2>
+  <div class="btns">
+    <div class="b"><b>①开始使用.bat</b><br>启动视频引擎（最常用）</div>
+    <div class="b"><b>②连接语音引擎.bat</b><br>连接【包B】语音引擎（可选）</div>
+    <div class="b"><b>③出问题了点我.bat</b><br>一键生成诊断报告</div>
+  </div>
+
+  <h2>四、与【包B】联动（可选配音）</h2>
+  <div class="card"><ol>
+    <li>解压并启动【包B】语音引擎包（详见包B 手册）。</li>
+    <li>回到本包双击 <code>②连接语音引擎.bat</code> 自动连上（找不到可把包B文件夹拖到该 bat 上）。</li>
+    <li>刷新网页，配音里出现“梁文峰”音色，生成时勾选“配音”即可。</li>
+  </ol>
+  <p>没有【包B】也能用本包，只是视频没有配音。</p></div>
+
+  <h2>五、排错</h2>
+  <div class="card"><ul>
+    <li><b>自检失败</b>：文件夹被拆开/缺文件，请重新解压整个包。</li>
+    <li><b>网页打不开</b>：手动访问 <code>http://127.0.0.1:8787</code>；仍不行双击 ③。</li>
+    <li><b>生成卡住</b>：看网页右下角进度/日志；或双击 ③ 生成诊断报告发我。</li>
+  </ul></div>
+
+  <h2>六、隐私</h2>
+  <div class="card"><p>全部在本机运行，不上传任何数据。<span class="ok">可放心使用。</span></p></div>
+</div>
+</body>
+</html>
