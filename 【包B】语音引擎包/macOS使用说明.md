@@ -3,7 +3,7 @@
 ## 适用范围
 
 - Apple Silicon Mac（arm64），已在 M1 Pro、32 GiB 内存上验收。
-- 包内自带 Python 3.12 arm64、PyTorch、ffmpeg 和 ffprobe，不使用包 A 的 Python，也不要求 Homebrew 或系统 Python 作为普通用户前置。
+- 包内自带 Python 3.12 arm64、PyTorch、ffmpeg 和 ffprobe，不使用包 A 的 Python，也不要求 Homebrew 或系统 Python 作为普通用户前置。调整语速时会优先使用可选的 Rubber Band；未安装时自动使用包内 ffmpeg，无需额外配置。
 - 推理使用 PyTorch MPS、float32；不会静默回退到 CPU。
 
 ## 启动

@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "project_id": "minimal-contract",
+  "title": "最小有效任务",
+  "language": "zh-CN",
+  "canvas": {"width": 1080, "height": 1920, "fps": 30},
+  "defaults": {
+    "voice": "女播音.wav",
+    "timing": {"head_pad_sec": 0.15, "tail_pad_sec": 0.25}
+  },
+  "captions": {"enabled": true, "style_preset": "default_lower_third"}
+}

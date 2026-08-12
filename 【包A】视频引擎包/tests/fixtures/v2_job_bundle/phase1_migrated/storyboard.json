@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "project_id": "phase1-three-shot",
+  "shots": [
+    {
+      "id": "shot-001",
+      "purpose": "建立暴雨、古城与信使抵达的紧迫处境",
+      "speech": {"kind": "narration", "text": "暮色压向古城时，一名浑身湿透的信使赶到了城门。"},
+      "visual": {
+        "keyframe": {"path": "assets/keyframes/shot-001.png", "sha256": "7f00ebd35a4f475ea387ebb76a97d822814840528f0457075f235df5ae4b880b"},
+        "focus": {"x": 0.5, "y": 0.46}
+      },
+      "motion": {"preset": "slow_push_in", "strength": "low", "intent": "缓慢靠近信使，同时保留城门环境"},
+      "caption": {"mode": "speech"},
+      "transition_out": {"type": "cut", "duration_sec": 0},
+      "hero": false
+    },
+    {
+      "id": "shot-002",
+      "purpose": "揭示密信中的山洪危机",
+      "speech": {"kind": "narration", "text": "他怀里的密信，只写着一句话：山洪会在今夜抵达。"},
+      "visual": {
+        "keyframe": {"path": "assets/keyframes/shot-002.png", "sha256": "d4f896b978e9a5f06c6732540c7bee231884502b9fe8a0067b73074699916482"},
+        "focus": {"x": 0.5, "y": 0.42}
+      },
+      "motion": {"preset": "gentle_drift", "strength": "low", "intent": "轻微漂移，保持密信与人物面部稳定"},
+      "timing": {"head_pad_sec": 0.15, "tail_pad_sec": 0.25},
+      "caption": {"mode": "speech"},
+      "transition_out": {"type": "cut", "duration_sec": 0}
+    },
+    {
+      "id": "shot-003",
+      "purpose": "守军认出信物，警灯亮起并完成收束",
+      "speech": {"kind": "narration", "text": "城门闭合前，守军认出了信物，第一盏警灯终于亮起。"},
+      "visual": {
+        "keyframe": {"path": "assets/keyframes/shot-003.png", "sha256": "0c2c58aa2fd4e75466101c96a74db7e3cde9a68b5f0c9520158815a25bd08bf6"},
+        "focus": {"x": 0.52, "y": 0.42}
+      },
+      "motion": {"preset": "slow_pull_out", "strength": "low", "intent": "缓慢拉远，显露城门与亮起的警灯"},
+      "caption": {"mode": "speech"},
+      "transition_out": {"type": "cut", "duration_sec": 0},
+      "hero": true
+    }
+  ]
+}

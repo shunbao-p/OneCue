@@ -873,15 +873,15 @@ class GradioAppService:
     def _apply_speed(self, waveform, sample_rate: int, speed: float):
         """用 Rubber Band 做高音质时间拉伸调语速（保持音调，输出仍为无损 PCM）。
 
-        speed>1 加快（变短），speed<1 放慢（变长）。需要 rubberband 可执行文件。
+        speed>1 加快（变短），speed<1 放慢（变长）。优先使用 Rubber Band；
+        最终包未携带 Rubber Band 时，回退到包内 FFmpeg 的 atempo 滤镜。
         """
-        resolution = resolve_external_tool(
+        rubberband = resolve_external_tool(
             "rubberband",
             explicit_path=self.config.rubberband_path,
             package_root=self.config.repo_root,
-            required=True,
+            required=False,
         )
-        rubberband_exe = resolution.path
         tmp_dir = self.config.repo_root / "tmp"
         tmp_dir.mkdir(parents=True, exist_ok=True)
         token = uuid.uuid4().hex[:8]
@@ -889,20 +889,53 @@ class GradioAppService:
         out_path = tmp_dir / f"_stretch_out_{token}.wav"
         try:
             sf.write(str(in_path), waveform, sample_rate)
-            # -3 = R3 引擎（最高音质）；--tempo 调速保持音调
+            if rubberband is not None:
+                command = [
+                    rubberband.path,
+                    "-3",
+                    "--tempo",
+                    f"{speed:.4f}",
+                    str(in_path),
+                    str(out_path),
+                ]
+                tool_name = f"Rubber Band（{rubberband.path}）"
+            else:
+                ffmpeg = resolve_external_tool(
+                    "ffmpeg",
+                    explicit_path=self.config.ffmpeg_path,
+                    package_root=self.config.repo_root,
+                    required=True,
+                )
+                command = [
+                    ffmpeg.path,
+                    "-nostdin",
+                    "-hide_banner",
+                    "-loglevel",
+                    "error",
+                    "-y",
+                    "-i",
+                    str(in_path),
+                    "-filter:a",
+                    f"atempo={speed:.4f}",
+                    "-c:a",
+                    "pcm_s16le",
+                    str(out_path),
+                ]
+                tool_name = f"FFmpeg atempo（{ffmpeg.path}）"
+                logger.info(
+                    "Rubber Band is unavailable; using bundled FFmpeg atempo for speed={}",
+                    speed,
+                )
             try:
                 subprocess.run(
-                    [rubberband_exe, "-3", "--tempo", f"{speed:.4f}",
-                     str(in_path), str(out_path)],
+                    command,
                     check=True,
                     capture_output=True,
                 )
             except subprocess.CalledProcessError as exc:
                 stderr = (exc.stderr or b"").decode("utf-8", "replace").strip()
                 raise RuntimeError(
-                    f"Rubber Band 变速失败（{rubberband_exe}）。\n"
-                    f"可能是版本过旧不支持 -3（R3 引擎），请升级到 v3+。\n"
-                    f"rubberband 输出：{stderr}"
+                    f"音频变速失败：{tool_name}。\n工具输出：{stderr}"
                 ) from exc
             stretched, _ = sf.read(str(out_path))
             return stretched

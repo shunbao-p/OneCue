@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "project_id": "minimal-contract",
+  "shots": [
+    {
+      "id": "shot-001",
+      "purpose": "证明一镜头最小任务可以加载",
+      "speech": {"kind": "narration", "text": "风从山谷吹来。"},
+      "visual": {
+        "keyframe": {
+          "path": "assets/keyframes/最小 关键帧.png",
+          "sha256": "f70fc29ce5aa54753b7a5c787b3f24520ec62ccae6e3a485b8f8fa0c87031848"
+        },
+        "focus": {"x": 0.5, "y": 0.45}
+      },
+      "motion": {"preset": "static", "strength": "low"},
+      "caption": {"mode": "speech"},
+      "transition_out": {"type": "cut", "duration_sec": 0}
+    }
+  ]
+}

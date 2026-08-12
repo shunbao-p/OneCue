@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "benchmark_cases": [
+    "portrait",
+    "architecture",
+    "landscape"
+  ],
+  "metric_definitions": {
+    "subject_identity": {
+      "scores": {"0": "严重变形或身份丢失", "1": "明显漂移", "2": "基本稳定", "3": "完全稳定且细节提升"}
+    },
+    "edges": {
+      "scores": {"0": "大面积撕裂或空洞", "1": "明显光晕或破边", "2": "仅小瑕疵", "3": "稳定自然"}
+    },
+    "background_geometry": {
+      "scores": {"0": "严重扭曲", "1": "可见漂移", "2": "可接受", "3": "空间层次明显增强"}
+    },
+    "motion": {
+      "scores": {"0": "不自然或眩晕", "1": "机械或无意义", "2": "合理", "3": "与叙事和构图高度匹配"}
+    },
+    "temporal_stability": {
+      "scores": {"0": "闪烁跳变", "1": "多处不稳", "2": "轻微波动", "3": "连贯稳定"}
+    },
+    "benefit": {
+      "scores": {"0": "明显差于 FFmpeg", "1": "无提升", "2": "小幅提升", "3": "一眼可见的有效提升"}
+    }
+  },
+  "entries": []
+}

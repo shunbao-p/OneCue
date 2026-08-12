@@ -19,6 +19,15 @@
 **/tests/evidence/**
 *.bat
 **/示范配音_*.wav
+**/.package-a-launch.lock
+**/.package-a-server.json
+**/.port
+
+# Generated release reports stay local; retain only distributable notices/licenses
+**/发布信息/*
+!**/发布信息/THIRD_PARTY_NOTICES.md
+!**/发布信息/licenses/
+!**/发布信息/licenses/**
 
 # Bundled release runtimes and Windows-only environment
 **/runtime/

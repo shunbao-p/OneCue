@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:text-av-generator:short-video-v2:job-bundle:project:v1",
+  "title": "Short Video V2 Job Bundle Project v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "project_id",
+    "title",
+    "language",
+    "canvas",
+    "defaults",
+    "captions"
+  ],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "project_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120,
+      "pattern": "\\S"
+    },
+    "language": {"type": "string", "const": "zh-CN"},
+    "target_duration_sec": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 600
+    },
+    "canvas": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height", "fps"],
+      "properties": {
+        "width": {"type": "integer", "const": 1080},
+        "height": {"type": "integer", "const": 1920},
+        "fps": {"type": "integer", "const": 30}
+      }
+    },
+    "defaults": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["voice", "timing"],
+      "properties": {
+        "voice": {"$ref": "#/$defs/voice"},
+        "timing": {"$ref": "#/$defs/timing"}
+      }
+    },
+    "captions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled", "style_preset"],
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "style_preset": {"type": "string", "const": "default_lower_third"}
+      }
+    }
+  },
+  "$defs": {
+    "voice": {
+      "type": "string",
+      "minLength": 5,
+      "maxLength": 255,
+      "pattern": "^(?!\\s)[^/\\\\\\u0000-\\u001f\\u007f]*\\S\\.wav$"
+    },
+    "timing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["head_pad_sec", "tail_pad_sec"],
+      "properties": {
+        "head_pad_sec": {"type": "number", "minimum": 0, "maximum": 3},
+        "tail_pad_sec": {"type": "number", "minimum": 0, "maximum": 3}
+      }
+    }
+  }
+}

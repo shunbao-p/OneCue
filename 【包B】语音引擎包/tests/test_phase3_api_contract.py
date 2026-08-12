@@ -25,6 +25,17 @@ class Result:
 
 
 class ContractTests(unittest.TestCase):
+    def test_speed_processing_falls_back_to_bundled_ffmpeg(self):
+        source = (PACKAGE_ROOT / "apps/gradio/service.py").read_text(encoding="utf-8")
+        method = source[
+            source.index("    def _apply_speed("):
+            source.index("    @staticmethod\n    def _compress_silence", source.index("    def _apply_speed("))
+        ]
+        self.assertIn('"rubberband",', method)
+        self.assertIn("required=False", method)
+        self.assertIn('"ffmpeg",', method)
+        self.assertIn('f"atempo={speed:.4f}"', method)
+
     def test_version_name_fields_and_defaults_are_fixed(self):
         self.assertEqual(contract.API_VERSION, "dots-tts.synthesize.v1")
         self.assertEqual(contract.API_NAME, "/synthesize_v1")
