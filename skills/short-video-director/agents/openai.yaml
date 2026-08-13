@@ -1,4 +1,4 @@
 interface:
   display_name: "短视频导演"
-  short_description: "以自然语言策划、制作、续接、检查、渲染与返修 OneCue 短视频"
-  default_prompt: "Use $short-video-director to plan or continue a short-video V2 task from natural-language input."
+  short_description: "以自然语言制作多张静态分镜、人声、字幕与硬切短视频"
+  default_prompt: "Use $short-video-director to plan or continue a static-storyboard OneCue video with Image 2 stills, package B speech, captions, and package A hard cuts."

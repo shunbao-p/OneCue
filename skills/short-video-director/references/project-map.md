@@ -17,13 +17,14 @@ Read these from `<package-a>/docs/short_video_v2/` as needed:
 - `job_bundle_v1.md`: machine input contract
 - `image_workflow_v1.md`: Image 2 keyframe method
 - `core_pipeline_v1.md`: rendering, cache, failure, and CLI behavior
-- `motion_feasibility_v1.md`: honest motion boundary
 - `mvp_acceptance_v1.md`: accepted MVP baseline
 - `workflow_acceptance_v1.md`: accepted director workflow and skill boundary
 - `templates/brief_v1.md`: optional content-design aid
 - `templates/review_v1.md`: optional review and revision aid
 
 Do not substitute older root-level vision documents for these frozen v1 facts.
+
+`motion_feasibility_v1.md`, `motion_experiment_playbook_v1.md`, plans 04/07, and their experiments are historical motion research. They are not active-route documents and should be opened only when the user explicitly asks to revisit image animation.
 
 ## Evidence and records
 

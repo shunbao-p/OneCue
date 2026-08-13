@@ -1,15 +1,15 @@
 # OneCue · 文本到短视频工作流
 
-OneCue 是一套面向 Apple Silicon Mac 的本地短视频 MVP：Codex 负责理解内容、文案与分镜，Image 2 生成逐镜图片，包 B 生成逐镜人声，包 A/FFmpeg 校验 Schema v1 Job Bundle 并合成竖屏视频。当前已能从一段自然语言需求推进到候选成片，并保留校验、缓存、执行报告和镜头级返修能力。
+OneCue 是一套面向 Apple Silicon Mac 的本地短视频 MVP：Codex 负责理解内容、文案与分镜，Image 2 生成逐镜静态图片，包 B 生成逐镜人声，包 A/FFmpeg 校验 Schema v1 Job Bundle 并合成竖屏视频。当前已能从一段自然语言需求推进到候选成片，并保留校验、缓存、执行报告和镜头级返修能力。
 
-当前不使用 BGM；音频只来自包 B 的解说或角色对话。基础动态仍是 FFmpeg 虚拟摄影机推拉、平移与轻漂移，并非物体级自然动画；雨落、流水、人物动作等尚未实现。这是当前最明显的质量边界，不在此处夸大。
+当前第一版采用“多张静态分镜图随叙事硬切”的路线：不使用 BGM，不对图片做推拉、平移、漂移、拆层微动态或 I2V；音频只来自包 B 的解说或角色对话。每张图片仍会由包 A 编码为与该镜头人声等长的视频片段，再与字幕和其他镜头合成为成片。动态研究与兼容代码暂留，但不进入默认工作流。
 
 ## 系统构成
 
-- `【包A】视频引擎包`：Job Bundle 契约、TTS 编排、ASS 字幕、基础运镜、转场、缓存、报告与最终合成。
+- `【包A】视频引擎包`：Job Bundle 契约、TTS 编排、静态镜头编码、ASS 字幕、硬切、缓存、报告与最终合成。
 - `【包B】语音引擎包`：基于 dots.tts 的本地 TTS 服务，默认监听 `127.0.0.1:7860`。
 - `skills/short-video-director`：可选但强烈推荐的 Codex 薄导演层，识别策划、新建、续接、检查、渲染和返修模式；它不实现另一套视频能力。
-- `【包A】视频引擎包/docs/short_video_v2`：V2 的权威工作流、Schema 说明、图片约定、核心管线、动态边界与验收文档。
+- `【包A】视频引擎包/docs/short_video_v2`：V2 的权威工作流、Schema 说明、图片约定、核心管线与验收文档；动态文档仅作历史研究记录。
 
 ## 仓库不包含的内容
 
@@ -41,7 +41,7 @@ python3.12 scripts/setup_macos_source.py --model mf
 
 该脚本会在包 B 内创建 `runtime/python`，安装锁定依赖，以 editable 方式安装包 B，下载 `rednote-hilab/dots.tts-mf`，并按仓库中的 manifest 校验大小与 SHA-256。校验不通过时不应启动服务。
 
-可选质量版模型速度更慢、占用更大：
+可选质量版模型速度更慢、占用更大，当前第一版并不需要；仅在另行比较音质时下载：
 
 ```bash
 python3.12 scripts/download_macos_models.py --model soar
@@ -118,10 +118,14 @@ Job Bundle 必须是自包含的 Schema v1 目录。请先阅读 `【包A】视�
 
 ```bash
 "【包B】语音引擎包/runtime/python/bin/python3.12" -m unittest \
-  "【包A】视频引擎包/tests/test_director_workflow_docs.py" -v
-"【包B】语音引擎包/runtime/python/bin/python3.12" -m unittest discover \
-  -s "【包A】视频引擎包/tests" -p 'test_v2_*.py' -v
+  "【包A】视频引擎包/tests/test_director_workflow_docs.py" \
+  "【包A】视频引擎包/tests/test_v2_job_bundle_contract.py" \
+  "【包A】视频引擎包/tests/test_v2_core_runtime.py" \
+  "【包A】视频引擎包/tests/test_v2_core_pipeline.py" \
+  "【包A】视频引擎包/tests/test_v2_mvp_acceptance.py" -v
 ```
+
+计划 01、04、07 等旧阶段实验测试仍保留在 `【包A】视频引擎包/tests`，但不属于第一版日常门。需要审计历史兼容性时，才使用 `test_v2_*.py` 全量发现。
 
 包 B 的运行策略与 API 契约测试：
 

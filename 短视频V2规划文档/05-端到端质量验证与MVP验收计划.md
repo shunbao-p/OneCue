@@ -16,7 +16,7 @@
 - FFmpeg 是普通人物、建筑和风景镜头的正式默认，优先 `slow_push_in`，谨慎使用 `gentle_drift`，避免无叙事依据的左右晃动；
 - HyperFrames 仅保留信息设计型镜头的 `manual_only` 结论，不进入普通自然场景主线；
 - DepthFlow 对正式与人工自然场景路线均已拒绝；
-- MFLUX 因冷模型下载耗时失控归为 `research_only`；
+- MFLUX 在计划 04 当时因冷模型下载耗时失控归为 `research_only`；后续已决定退役并清理，本条仅保留历史承接，不构成未来推荐；
 - Draw Things/本地 I2V 因未获授权归为 `research_only`；
 - 正式高级动态 `formal_candidate` 为零，这符合计划 04 原定“可为零”的决策门；
 - 用户明确指出微放大、平移和晃动不等于真正动态，风景雨落、人物轻摆等仍是当前能力缺口。

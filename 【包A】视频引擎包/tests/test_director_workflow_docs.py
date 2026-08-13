@@ -3,8 +3,10 @@ from pathlib import Path
 
 
 PACKAGE_ROOT = Path(__file__).resolve().parents[1]
+REPOSITORY_ROOT = PACKAGE_ROOT.parent
 DOC_ROOT = PACKAGE_ROOT / "docs" / "short_video_v2"
 ACCEPTANCE_PATH = DOC_ROOT / "workflow_acceptance_v1.md"
+SKILL_ROOT = REPOSITORY_ROOT / "skills" / "short-video-director"
 
 
 class DirectorWorkflowDocumentationTests(unittest.TestCase):
@@ -34,7 +36,8 @@ class DirectorWorkflowDocumentationTests(unittest.TestCase):
             "python3 -m video_v2 render",
             "--shot",
             "用户终审",
-            "自然语义动态尚未实现",
+            "motion.preset: static",
+            "transition_out.type: cut",
             "轻量导演/导航层",
             "而非主链的技术依赖",
         ):
@@ -48,6 +51,27 @@ class DirectorWorkflowDocumentationTests(unittest.TestCase):
         self.assertIn("可裁剪", brief)
         self.assertIn("用户反馈", review)
         self.assertIn("最小返修", review)
+
+    def test_static_storyboard_is_the_active_product_profile(self):
+        director = (DOC_ROOT / "director_workflow_v1.md").read_text(encoding="utf-8")
+        job_bundle = (DOC_ROOT / "job_bundle_v1.md").read_text(encoding="utf-8")
+        brief = (DOC_ROOT / "templates" / "brief_v1.md").read_text(encoding="utf-8")
+        review = (DOC_ROOT / "templates" / "review_v1.md").read_text(encoding="utf-8")
+        skill = (SKILL_ROOT / "SKILL.md").read_text(encoding="utf-8")
+        gates = (SKILL_ROOT / "references" / "workflow-and-gates.md").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("第一版活跃范围", director)
+        self.assertIn("static + low + cut(0)", director)
+        self.assertIn('motion.preset: "static"', job_bundle)
+        self.assertIn('transition_out.type: "cut"', job_bundle)
+        self.assertIn("每镜一张静态图", brief)
+        self.assertIn("没有非预期推拉", review)
+        self.assertIn("sequence of distinct static storyboard images", skill)
+        self.assertIn("motion=static/low", gates)
+        self.assertNotIn("默认基础 FFmpeg 虚拟摄影机运动", director)
+        self.assertNotIn("basic FFmpeg camera motion", gates)
 
     def test_open_source_review_borrows_principles_without_runtime(self):
         evidence = ACCEPTANCE_PATH.read_text(encoding="utf-8")
