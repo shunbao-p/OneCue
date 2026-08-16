@@ -1,4 +1,0 @@
-interface:
-  display_name: "Prompt Writer"
-  short_description: "Create staged prompts plus a master execution prompt."
-  default_prompt: "Use $prompt-writer to turn my approved plan and handoff context into a staged execution prompt document, then show one copy-ready master prompt in chat so a new Codex session can execute the stages autonomously and pause only at genuine human gates."
