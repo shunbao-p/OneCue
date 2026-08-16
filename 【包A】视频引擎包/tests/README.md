@@ -61,12 +61,4 @@ cd 程序文件/引擎
 
 核心当前只支持对一个 Job Bundle 单写；不要并发渲染同一任务目录。失败或取消应查阅 `output/render_report.json`，并保留旧的有效 WAV、镜头和 final。
 
-## 短视频 V2 计划 04 可行性实验
-
-隔离实验协议、评分模板与 FFmpeg 基线测试：
-
-```text
-程序文件/runtime/bin/python3 -B -m unittest discover -s tests -p 'test_v2_phase4_feasibility.py' -v
-```
-
-实验入口和输出布局见 `experiments/short_video_v2_phase4/README.md`。模型、浏览器、原始/标准化视频及 run manifest 只写入被忽略的 `成片/短视频V2样片/phase4-image-motion/`，不得写入正式 Job Bundle 的缓存 manifest。
+动态化可行性实验及其专用测试不随 v1.0.0 当前发布树分发。

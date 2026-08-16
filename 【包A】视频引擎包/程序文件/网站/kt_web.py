@@ -31,7 +31,7 @@ import dots_control
 
 ROOT = paths.APP_ROOT
 PORT = paths.web_port()
-PRODUCTION_HOST = "0.0.0.0"
+PRODUCTION_HOST = "127.0.0.1"
 SSE_HEARTBEAT_SECONDS = 10.0
 DOWNLOAD_CHUNK_SIZE = 1024 * 1024
 MAX_REQUEST_BYTES = 256 * 1024 * 1024
@@ -1332,7 +1332,7 @@ def main(host=PRODUCTION_HOST, port=None):
     global PORT
     requested_port = PORT if port is None else int(port)
     try:
-        # 生产默认 0.0.0.0，测试显式传 127.0.0.1 与端口 0。
+        # 生产与测试均仅监听 loopback；端口 0 仍用于测试内核分配。
         httpd = create_server(host, requested_port)
     except OSError as exc:
         print(f"❌ 无法绑定端口：{exc}")
@@ -1345,19 +1345,7 @@ def main(host=PRODUCTION_HOST, port=None):
         Path(__file__).resolve().parent.joinpath(".port").write_text(str(PORT), encoding="utf-8")
     except Exception:
         pass
-    # 打印本机局域网 IP（供手机访问）
-    lan = None
-    try:
-        import socket as _s
-        s = _s.socket(_s.AF_INET, _s.SOCK_DGRAM)
-        s.connect(("8.8.8.8", 80))
-        lan = s.getsockname()[0]
-        s.close()
-    except Exception:
-        pass
     print(f"✅ 视频生成 Web 已启动:  http://127.0.0.1:{PORT}/")
-    if lan:
-        print(f"   📱 局域网访问: http://{lan}:{PORT}/  （需防火墙放行 {PORT} 端口）")
     print("   按 Ctrl+C 停止")
     try:
         httpd.serve_forever()

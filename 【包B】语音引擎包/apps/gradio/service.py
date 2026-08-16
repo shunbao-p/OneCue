@@ -130,25 +130,14 @@ def sync_default_prompt_library(
     copied_count = 0
     for asset_name, source_asset in source_assets.items():
         target_asset = target_dir / asset_name
-        if (
-            not target_asset.exists()
-            or target_asset.stat().st_size != source_asset.stat().st_size
-            or target_asset.stat().st_mtime_ns != source_asset.stat().st_mtime_ns
-        ):
+        if not target_asset.exists():
             shutil.copy2(source_asset, target_asset)
             copied_count += 1
-
-    removed_count = 0
-    for target_asset in sorted(target_dir.iterdir()):
-        if _is_prompt_asset(target_asset) and target_asset.name not in source_assets:
-            target_asset.unlink(missing_ok=True)
-            removed_count += 1
     logger.info(
-        "Prompt library sync completed: copied_assets={} removed_assets={} "
+        "Prompt library sync completed: copied_assets={} preserved_user_assets=true "
         "available_assets={}",
         copied_count,
-        removed_count,
-        len(source_assets),
+        len(tuple(target_dir.iterdir())),
     )
 
 

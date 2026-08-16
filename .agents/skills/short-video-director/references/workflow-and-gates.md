@@ -2,13 +2,13 @@
 
 ## Plan
 
-Apply safe defaults when omitted: zh-CN vertical video, 30–45 seconds, 6–10 shots, voice only, independent Image 2 keyframes, and basic FFmpeg camera motion. Record assumptions and stop before media generation.
+Apply safe defaults when omitted: zh-CN vertical video, 30–45 seconds, 6–10 shots, voice only, independent Image 2 stills, static shots, and hard cuts. Record assumptions and stop before media generation.
 
 ## Create
 
 1. Convert the request into a concise Brief, fact boundary, script, and shot plan.
 2. Plan or generate independent keyframes through Image 2; preserve references, prompts, ledger entries, and hashes.
-3. Assemble only Schema v1 `project.json`, `storyboard.json`, and self-contained assets.
+3. Assemble only Schema v1 `project.json`, `storyboard.json`, and self-contained assets. Set every new shot to `motion=static/low` and `transition_out=cut/0` while retaining `visual.focus` for crop placement.
 4. Run `validate --json`; repair contract input before any TTS or FFmpeg work.
 5. Check package A/B readiness and run the existing renderer.
 6. Read the report, cache manifest, media evidence, and review template.
@@ -38,7 +38,8 @@ Pause for:
 - new third-party/paid/cloud APIs, credentials, downloads, publishing, or new authorization; the established built-in Image 2 route is allowed when creation was explicitly requested;
 - destructive deletion, cache cleanup, or edits to unrelated/old formal artifacts;
 - a request that requires Schema, core pipeline, or provider-scope changes;
+- any request to add image animation, virtual-camera motion, crossfades, HyperFrames, DepthFlow, or I2V to the active V1 route;
 - the candidate-video user review gate;
-- user rejection of the basic motion boundary.
+- user rejection of the static-storyboard product direction.
 
 Record the blocking gate and leave evidence intact.

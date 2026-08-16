@@ -30,7 +30,7 @@ job-<project_id>/
 - `project_id`：1–64 位小写字母、数字、点、下划线或连字符，首字符须为字母或数字。
 - `language`：v1 固定 `zh-CN`。
 - `canvas`：v1 固定 1080x1920、30 FPS。
-- `defaults.voice`：安全的 `.wav` 文件名，不是路径；真实音色存在性由计划 03 的 TTS 预检负责。
+- `defaults.voice`：安全的 `.wav` 文件名，不是路径；真实音色存在性由渲染前的 TTS 预检负责。
 - `defaults.timing`：头尾留白均为 0–3 秒有限数。
 - `captions.style_preset`：v1 固定 `default_lower_third`。
 
@@ -50,6 +50,8 @@ job-<project_id>/
 - 可选 `timing` 覆盖项目默认留白；可选 `hero` 默认 `false`。
 
 基础运动预设固定为：`static`、`slow_push_in`、`slow_pull_out`、`pan_left`、`pan_right`、`tilt_up`、`tilt_down`、`gentle_drift`。它们是高级工具缺失时仍可确定执行的语义，不代表绑定某个 Provider。
+
+当前第一版的产品默认比 Schema 能力更窄：所有新建镜头统一写 `motion.preset: "static"`、`motion.strength: "low"`，所有镜间切换统一写 `transition_out.type: "cut"`、`transition_out.duration_sec: 0`。其余运动预设与 `crossfade` 仅为旧任务兼容能力，不由当前工作流主动生成。`visual.focus` 仍须保留，它用于竖屏规格化裁切，并不意味着运镜。
 
 ## 路径与完整性
 

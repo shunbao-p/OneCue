@@ -1,6 +1,8 @@
 # 短视频 V2 核心管线 v1
 
-本文描述包 A 的本地渲染核心。它只读取已通过 Schema v1 验证的 Job Bundle，逐镜生成人声、字幕与基础运镜，再以 FFmpeg 合成 `output/final.mp4`。本版不提供 Web API，不接入 BGM、环境音、SFX 或高级图片动态化。
+本文描述包 A 的本地渲染核心。它只读取已通过 Schema v1 验证的 Job Bundle，逐镜生成人声、字幕与静态画面片段，再以 FFmpeg 硬切合成 `output/final.mp4`。本版不提供 Web API，不接入 BGM、环境音、SFX 或图片动态化。
+
+当前产品配置要求所有新任务使用 `motion.preset=static`、`motion.strength=low` 与 `transition_out=cut/0`。核心仍解析旧运动预设和短叠化，以保证既有 Job Bundle 可重渲；这些兼容分支不属于第一版默认工作流，也不应由导演 Skill 主动选择。
 
 ## Python 入口
 
@@ -73,4 +75,3 @@ cd "【包A】视频引擎包/程序文件/引擎"
 ```
 
 render 退出码：成功 `0`；Job Bundle 契约错误 `2`；可预期运行失败 `3`；取消 `130`；未预期内部错误 `1`。`--json` 模式的 stdout 只有最终一个 JSON envelope，进度写 stderr。可预期错误使用稳定代码，详细证据可查 `output/render_report.json`。
-
