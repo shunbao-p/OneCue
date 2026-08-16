@@ -41,7 +41,6 @@ class Phase4FeasibilityContractTests(unittest.TestCase):
             "normalize_clip.py",
             "scorecard.py",
             "providers/ffmpeg_baseline.py",
-            "providers/mflux_adapter.py",
             "providers/depthflow_adapter.py",
             "providers/hyperframes_adapter.py",
             "templates/image_prompt_template.md",
@@ -179,55 +178,6 @@ class Phase4FeasibilityContractTests(unittest.TestCase):
             self.assertIn("zoompan=", runner.argv[runner.argv.index("-vf") + 1])
             self.assertIs(runner.kwargs["check"], True)
             self.assertEqual(runner.kwargs["timeout"], 9.0)
-
-    def test_mflux_adapter_is_fixed_to_one_model_and_isolated_root(self):
-        adapter = load_module(
-            "phase4_mflux_adapter",
-            EXPERIMENT_DIR / "providers" / "mflux_adapter.py",
-        )
-
-        class CapturingRunner:
-            def run(self, argv, **kwargs):
-                self.argv = argv
-                self.kwargs = kwargs
-                return object()
-
-        with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary) / "mflux"
-            executable = root / "venv" / "bin" / "mflux-generate-flux2"
-            executable.parent.mkdir(parents=True)
-            executable.write_bytes(b"fixture")
-            runner = CapturingRunner()
-            adapter.run_mflux_generate(
-                "rainy ancient gate without text",
-                root / "output" / "architecture.png",
-                runner=runner,
-                root=root,
-                executable=executable,
-                seed=404001,
-                width=448,
-                height=768,
-                timeout_sec=30.0,
-            )
-            self.assertIsInstance(runner.argv, list)
-            self.assertEqual(
-                runner.argv[runner.argv.index("--model") + 1],
-                "mlx-community/flux2-klein-4b-4bit",
-            )
-            self.assertEqual(runner.argv[runner.argv.index("--guidance") + 1], "1.0")
-            self.assertEqual(runner.kwargs["timeout"], 30.0)
-            self.assertEqual(runner.kwargs["env"]["HF_HOME"], str(root.resolve() / "hf"))
-            self.assertEqual(runner.kwargs["env"]["HF_HUB_DISABLE_XET"], "1")
-            with self.assertRaises(ValueError):
-                adapter.build_mflux_generate_argv(
-                    "escape",
-                    Path(temporary) / "outside.png",
-                    executable=executable,
-                    root=root,
-                    seed=1,
-                    width=448,
-                    height=768,
-                )
 
     def test_depthflow_adapter_uses_isolated_cache_and_fixed_visual_spec(self):
         adapter = load_module(

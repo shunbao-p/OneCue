@@ -1,5 +1,7 @@
 # 短视频 V2 计划 04 隔离实验
 
+> 状态（2026-08-13）：历史实验目录，第一版不调用。图片主路仍为 Image 2；动态适配器与基准测试只保留既往可行性证据，不进入正式工作流。
+
 本目录只承载图片与单镜头动态化的可行性验证，不属于包 A 正式管线。实验输入、原始输出、标准化输出、日志与 manifest 都写入被 `**/成片/` 忽略的工作区；不得写入正式 Job Bundle 的 `cache/manifest.json`。
 
 ## 固定边界
@@ -10,7 +12,7 @@
 - 所有外部命令都经 `video_v2.runtime.CommandRunner` 以 `list[str]`、`shell=False` 执行。
 - 每个 run 使用独立 `run_id`，分开保存 `raw/`、`normalized/` 与 `manifest.json`；已存在 run 拒绝覆盖。
 - 不读取或写入 OpenAI API 密钥，不生成 BGM/SFX/TTS，不修改 Schema、正式缓存、时间线、字幕或 final。
-- MFLUX、DepthFlow、HyperFrames、Draw Things/I2V 只有在获得下载/安装授权并实际进入实验时才新增 adapter；不要预留空壳模块。
+- 已退役的本地静态图后备不再携带 adapter、环境或模型缓存。DepthFlow/HyperFrames 适配器仅作完成过的计划 04 实验记录，不是正式 Provider。
 
 ## FFmpeg 基线
 

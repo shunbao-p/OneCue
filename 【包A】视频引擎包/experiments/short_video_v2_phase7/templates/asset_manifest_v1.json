@@ -1,0 +1,147 @@
+{
+  "schema": "short-video-v2.phase7.asset-manifest.v1",
+  "status": "template",
+  "experiment": {
+    "case_id": "<case-a|case-b>",
+    "source_kind": "<controlled-original|project-transfer>",
+    "master_source": "<absolute-regular-file>",
+    "master_sha256": "<64-lowercase-hex>",
+    "motion_brief": "<absolute-regular-file>",
+    "revision_count": 0,
+    "revision_limit": 1
+  },
+  "isolation": {
+    "cache_root": "/Users/yuh/Library/Caches/text-video-plan07-hyperframes",
+    "evidence_root": "<project-phase7-evidence-root>",
+    "forbid_symlink_escape": true,
+    "protected_roots": [
+      "/Users/yuh/Library/Caches/text-video-plan04-feasibility/hyperframes"
+    ]
+  },
+  "resource_policy": {
+    "new_download_cache_limit_bytes": 1073741824,
+    "requires_pause_above_limit": true,
+    "new_model_requires_pause": true,
+    "third_party_provider_requires_pause": true,
+    "cloud_api_or_fee_requires_pause": true
+  },
+  "command_policy": {
+    "argv_type": "list[str]",
+    "shell": false,
+    "finite_timeout_required": true,
+    "runtime_network_forbidden": true
+  },
+  "media_spec": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "duration_sec_min": 4,
+    "duration_sec_max": 6,
+    "codec": "h264",
+    "pixel_format": "yuv420p",
+    "audio_streams": 0
+  },
+  "variants": [
+    {"id": "S", "meaning": "same-source static"},
+    {"id": "W", "meaning": "same-source whole-image motion"},
+    {"id": "L", "meaning": "same-source layered micro-motion"}
+  ],
+  "motion_layers": [
+    "camera",
+    "scene",
+    "subject",
+    "local_state"
+  ],
+  "required_asset_roles": {
+    "character_or_animal": [
+      "master",
+      "background-clean",
+      "subject-cutout",
+      "body",
+      "head",
+      "eyelid-or-eyes-closed",
+      "foreground"
+    ],
+    "plant": [
+      "master",
+      "background-clean",
+      "stem-or-base",
+      "leaf-01",
+      "leaf-02",
+      "foreground",
+      "light-or-particle"
+    ]
+  },
+  "assets": [
+    {
+      "role": "<role-from-required-asset-roles>",
+      "path": "<absolute-regular-file>",
+      "source": "<generated|edited|derived|project-existing>",
+      "prompt_or_operation": "<full-prompt-or-deterministic-operation>",
+      "width": 1080,
+      "height": 1920,
+      "has_alpha": false,
+      "sha256": "<64-lowercase-hex>",
+      "purpose": "<layer-purpose>",
+      "version": 1
+    }
+  ],
+  "static_proofs": {
+    "hero_recomposition": "<path>",
+    "subject_peak": "<path>",
+    "local_state_peak": "<path>",
+    "alpha_on_light": "<path>",
+    "alpha_on_dark": "<path>",
+    "contact_sheet": "<path>",
+    "passed": false
+  },
+  "timeline_contract": {
+    "single_paused_timeline": true,
+    "parent_child_layers": true,
+    "stable_selectors": [
+      "camera-rig",
+      "subject-root",
+      "head-or-leaf-pivot",
+      "eyelid-or-local-state",
+      "foreground",
+      "particle"
+    ],
+    "finite_repeats": true,
+    "seeded_or_explicit_particles": true,
+    "forbidden_runtime_sources": [
+      "Date.now",
+      "performance.now",
+      "unseeded Math.random",
+      "runtime fetch",
+      "infinite repeat",
+      "timer",
+      "unregistered requestAnimationFrame"
+    ]
+  },
+  "proof_poses": [
+    "first_frame",
+    "pre_action_hold",
+    "subject_peak",
+    "local_state_peak",
+    "return_to_rest",
+    "final_minus_hold",
+    "final_frame"
+  ],
+  "visual_failure_checks": [
+    "broken-neck-or-joint",
+    "floating-subject-part",
+    "original-part-ghost",
+    "double-eyes-or-face",
+    "background-hole-or-repeat",
+    "eyelid-or-state-drift",
+    "alpha-fringe-or-hard-edge",
+    "mechanical-loop-or-motion-sickness",
+    "subject-motion-not-perceptible",
+    "effect-used-to-hide-defect"
+  ],
+  "review_gate": {
+    "batch5_status": "awaiting_user_review",
+    "maximum_verdict_before_user_reply": "CONDITIONAL",
+    "batch6_forbidden_before_user_reply": true
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "schema": "short-video-v2.phase7.scorecard.v1",
+  "status": "template",
+  "scale": {
+    "min": 0,
+    "max": 3,
+    "meaning": {
+      "0": "hard failure or absent",
+      "1": "weak or distracting",
+      "2": "usable with bounded concerns",
+      "3": "clear, natural, and fit for the case"
+    }
+  },
+  "metrics": [
+    "subject_motion_perceptibility",
+    "motion_naturalness",
+    "identity_stability",
+    "seam_and_occlusion_quality",
+    "scene_depth_and_environment",
+    "camera_comfort",
+    "engineering_complexity",
+    "overall_usability"
+  ],
+  "hard_failures": [
+    "only_whole_image_motion",
+    "broken_neck_or_joint",
+    "double_face_or_ghost",
+    "background_hole",
+    "eyelid_or_state_drift",
+    "alpha_fringe_or_hard_cut",
+    "motion_sickness",
+    "subject_motion_not_perceptible",
+    "identity_change",
+    "audio_or_text_bias_in_review"
+  ],
+  "cases": [
+    {
+      "case_id": "case-a",
+      "required_variants": ["S", "W", "L"],
+      "scores": {},
+      "hard_failures_observed": [],
+      "notes": ""
+    },
+    {
+      "case_id": "case-b",
+      "required_variants": ["W", "L"],
+      "preferred_variants": ["S", "W", "L"],
+      "scores": {},
+      "hard_failures_observed": [],
+      "notes": ""
+    }
+  ],
+  "blind_review_questions": [
+    "Which version most looks like the picture itself is moving?",
+    "Are the local subject or leaf motions natural and clearly visible?",
+    "Is there unacceptable puppet feel, seam, flicker, or motion sickness?",
+    "Is this worth using for a small number of shots or most ordinary shots?",
+    "Which motion should be reduced, strengthened, or removed?"
+  ],
+  "review_policy": {
+    "private_mapping_required": true,
+    "tool_identity_hidden": true,
+    "codex_scores_sealed_before_user_review": true,
+    "user_reply_required_for_batch6": true,
+    "maximum_verdict_before_user_reply": "CONDITIONAL"
+  }
+}

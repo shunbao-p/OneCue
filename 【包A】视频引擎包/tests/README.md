@@ -61,9 +61,9 @@ cd 程序文件/引擎
 
 核心当前只支持对一个 Job Bundle 单写；不要并发渲染同一任务目录。失败或取消应查阅 `output/render_report.json`，并保留旧的有效 WAV、镜头和 final。
 
-## 短视频 V2 计划 04 可行性实验
+## 短视频 V2 计划 04 可行性实验（历史、非第一版日常门）
 
-隔离实验协议、评分模板与 FFmpeg 基线测试：
+以下仅用于复核旧隔离实验协议、评分模板与 FFmpeg 基线，不由当前静态工作流自动运行：
 
 ```text
 程序文件/runtime/bin/python3 -B -m unittest discover -s tests -p 'test_v2_phase4_feasibility.py' -v

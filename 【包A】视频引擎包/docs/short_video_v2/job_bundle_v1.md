@@ -51,6 +51,8 @@ job-<project_id>/
 
 基础运动预设固定为：`static`、`slow_push_in`、`slow_pull_out`、`pan_left`、`pan_right`、`tilt_up`、`tilt_down`、`gentle_drift`。它们是高级工具缺失时仍可确定执行的语义，不代表绑定某个 Provider。
 
+当前第一版的产品默认比 Schema 能力更窄：所有新建镜头统一写 `motion.preset: "static"`、`motion.strength: "low"`，所有镜间切换统一写 `transition_out.type: "cut"`、`transition_out.duration_sec: 0`。其余运动预设与 `crossfade` 仅为旧任务兼容能力，不由当前工作流主动生成。`visual.focus` 仍须保留，它用于竖屏规格化裁切，并不意味着运镜。
+
 ## 路径与完整性
 
 JSON 中的文件路径统一使用 Bundle 内 POSIX 相对路径。允许中文和空格；拒绝空值、首尾空白、控制字符、反斜杠、URI、`~`、`.`/`..` 段、POSIX/Windows/UNC 绝对路径、解析后越界，以及 Bundle 根、祖先或目标符号链接。
