@@ -16,9 +16,9 @@ from pathlib import Path
 from typing import Any
 
 
-REPOSITORIES = {
-    "mf": ("rednote-hilab/dots.tts-mf", "macos-mf-model.json"),
-    "soar": ("rednote-hilab/dots.tts-soar", "macos-soar-model.json"),
+MANIFESTS = {
+    "mf": "macos-mf-model.json",
+    "soar": "macos-soar-model.json",
 }
 
 
@@ -33,7 +33,12 @@ def sha256(path: Path) -> str:
 def read_manifest(package_b: Path, manifest_name: str) -> dict[str, Any]:
     path = package_b / "manifests" / manifest_name
     payload = json.loads(path.read_text(encoding="utf-8"))
-    if payload.get("schema_version") != 1 or not isinstance(payload.get("files"), list):
+    if (
+        payload.get("schema_version") != 1
+        or not isinstance(payload.get("files"), list)
+        or not payload.get("repository")
+        or not payload.get("revision")
+    ):
         raise RuntimeError(f"模型清单格式无效：{path}")
     return payload
 
@@ -57,15 +62,18 @@ def verify_model(model_dir: Path, manifest: dict[str, Any]) -> list[str]:
     return failures
 
 
-def download_one(package_b: Path, model_key: str, revision: str | None) -> None:
-    repo_id, manifest_name = REPOSITORIES[model_key]
+def download_one(package_b: Path, model_key: str) -> None:
+    manifest_name = MANIFESTS[model_key]
     manifest = read_manifest(package_b, manifest_name)
+    repo_id = str(manifest["repository"])
+    revision = str(manifest["revision"])
     model_name = str(manifest["model"])
     target = package_b / "pretrained_models" / model_name
     failures = verify_model(target, manifest) if target.exists() else ["目标目录尚不存在"]
     if failures and failures != ["目标目录尚不存在"]:
         print(f"{model_name} 已存在但校验失败，将用上游快照补齐后重新校验。")
 
+    os.environ.setdefault("HF_HUB_DISABLE_XET", "1")
     try:
         from huggingface_hub import snapshot_download
     except ImportError as exc:
@@ -74,12 +82,13 @@ def download_one(package_b: Path, model_key: str, revision: str | None) -> None:
         ) from exc
 
     patterns = [str(item["path"]) for item in manifest["files"]]
-    print(f"下载 {repo_id} -> {target}")
+    print(f"下载 {repo_id}@{revision} -> {target}")
     snapshot_download(
         repo_id=repo_id,
         revision=revision,
         local_dir=str(target),
         allow_patterns=patterns,
+        max_workers=2,
     )
     failures = verify_model(target, manifest)
     if failures:
@@ -99,11 +108,6 @@ def main() -> int:
         help="mf 为默认快速版；soar 为质量版；all 下载两者。",
     )
     parser.add_argument(
-        "--revision",
-        default=None,
-        help="可选 Hugging Face revision；默认使用仓库当前版本，并由 SHA-256 清单兜底校验。",
-    )
-    parser.add_argument(
         "--verify-only",
         action="store_true",
         help="只校验本地模型，不联网下载。",
@@ -116,7 +120,7 @@ def main() -> int:
     package_b = repo_root / "【包B】语音引擎包"
     selected = ("mf", "soar") if args.model == "all" else (args.model,)
     for model_key in selected:
-        repo_id, manifest_name = REPOSITORIES[model_key]
+        manifest_name = MANIFESTS[model_key]
         manifest = read_manifest(package_b, manifest_name)
         target = package_b / "pretrained_models" / str(manifest["model"])
         if args.verify_only:
@@ -125,7 +129,7 @@ def main() -> int:
                 raise SystemExit("\n".join(failures))
             print(f"校验通过：{manifest['model']}")
         else:
-            download_one(package_b, model_key, args.revision)
+            download_one(package_b, model_key)
     return 0
 
 

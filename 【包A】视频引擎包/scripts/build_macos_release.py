@@ -271,9 +271,10 @@ def _copy_release_application(destination, python_runtime, prefix):
         "dots_control.py",
     ):
         _copy_file(PACKAGE_ROOT / "程序文件" / name, program / name, 0o644)
-    (program / "config.ini").write_text(
-        "[server]\nport = 8787\n\n[dots]\nroot =\nport = 7860\n",
-        encoding="utf-8",
+    _copy_file(
+        PACKAGE_ROOT / "程序文件" / "config.example.ini",
+        program / "config.ini",
+        0o644,
     )
     shutil.copytree(PACKAGE_ROOT / "程序文件" / "引擎", program / "引擎", ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
     website = program / "网站"

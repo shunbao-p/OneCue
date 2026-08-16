@@ -194,7 +194,7 @@ python apps/gradio/app.py \
   --optimize
 ```
 
-Defaults to `http://0.0.0.0:7860`. With `--optimize` the first launch runs warmup (slower startup, faster steady-state).
+Defaults to the local-only address `http://127.0.0.1:7860`. With `--optimize` the first launch runs warmup (slower startup, faster steady-state).
 
 ### Fine-tuning
 

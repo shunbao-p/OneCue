@@ -318,7 +318,7 @@ class WindowsBoundaryContractTests(unittest.TestCase):
                     mock.patch.object(socket, "socket", side_effect=OSError), \
                     contextlib.redirect_stdout(io.StringIO()):
                 kt_web.main()
-            self.assertEqual(attempts, [("0.0.0.0", 10_000), ("0.0.0.0", 10_001)])
+            self.assertEqual(attempts, [("127.0.0.1", 10_000), ("127.0.0.1", 10_001)])
             self.assertEqual(kt_web.PORT, 10_001)
             self.assertTrue(server.served)
             write_port.assert_called_once_with("10001", encoding="utf-8")

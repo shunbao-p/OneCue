@@ -69,8 +69,11 @@ class StaticLauncherContracts(unittest.TestCase):
         ):
             with self.subTest(required=required):
                 self.assertIn(required, source)
-        self.assertIn('root =\\nport = 7860', source)
+        self.assertIn('PACKAGE_ROOT / "程序文件" / "config.example.ini"', source)
+        self.assertIn('program / "config.ini"', source)
+        self.assertNotIn('(program / "config.ini").write_text', source)
         self.assertNotIn('_copy_file(PACKAGE_ROOT / "程序文件" / "config.ini"', source)
+        self.assertNotIn('PACKAGE_ROOT / "experiments"', source)
 
     def test_runtime_lock_is_arm64_auditable_and_forbids_nonfree(self):
         lock = json.loads((SCRIPTS_DIR / "macos-runtime-lock.json").read_text(encoding="utf-8"))

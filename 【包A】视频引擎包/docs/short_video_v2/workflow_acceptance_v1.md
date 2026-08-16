@@ -3,23 +3,25 @@
 > 状态：`complete`  
 > 日期：2026-08-12  
 > 当前总判定：`PASS`；首轮六份计划全部完成。
+>
+> 2026-08-13 产品配置更新：本记录继续证明 Schema v1、包 A/B 主链和导演 Skill 可用，但新任务的视觉默认已收束为多张静态分镜图与硬切。记录中的基础运镜/动态边界措辞只反映当时验收现场，不再指导第一版执行。
 
 ## 1. 分拆判定
 
 | 维度 | 判定 | 证据 |
 | --- | --- | --- |
 | `core_workflow_verdict` | PASS | 权威流程、Brief/review 模板、真实 CLI/Schema 对齐、计划 05 主链保护与隔离全缓存演练通过 |
-| `skill_verdict` | PASS | 个人目录安装；官方脚手架来源；`quick_validate.py` PASS；44 行 `SKILL.md`、三份 references、零 scripts；六模式前向测试 48/48 |
+| `skill_verdict` | PASS | 仓库级 `.agents/skills/short-video-director/`；`quick_validate.py` PASS；薄 Skill、三份 references、零 scripts；六模式前向测试 48/48 |
 | 行为与安全 | PASS | 策划/检查不误跑；validate 优先；非法包门前停止；最小 `--shot`；用户门、外部授权、脏树和旧 final 保护成立 |
 | 隔离演练 | PASS | 8 audio hit、8 shot hit、1 final hit，零重建；完整解码 PASS；正式包未改 |
 | 用户工作流可用性 | PASS | 用户已通过实际操作生成一条符合要求的视频，并明确判定“工作流通过” |
 | 计划 06 总判定 | PASS | 文档、Skill、行为、演练、保护检查与用户真实使用门全部通过；首轮六份计划完成 |
 
-Skill 不是视频主链的技术依赖。即使它暂时未被某个会话发现，Codex 内容与分镜 → Image 2 关键帧 → 包 B 逐镜人声 → 包 A/FFmpeg 校验与合成的主链仍可直接按本文件、`director_workflow_v1.md` 和模板执行；不得把 Skill 问题反写成计划 05 主链失败。
+Skill 不是视频主链的技术依赖。即使它暂时未被某个会话发现，Codex 内容与静态分镜 → Image 2 静态关键帧 → 包 B 逐镜人声 → 包 A/FFmpeg 校验、静态镜头编码与硬切合成的主链仍可直接按 `director_workflow_v1.md` 和模板执行；不得把 Skill 问题反写成计划 05 主链失败。
 
 ## 2. 最短使用方式
 
-随仓库版本位置：`skills/short-video-director/`。安装时将其复制到 `${CODEX_HOME:-$HOME/.codex}/skills/short-video-director/`；仓库根目录 `README.md` 给出了完整命令。
+随仓库版本位置：`.agents/skills/short-video-director/`。Codex 从仓库根目录或其子目录启动时会自动发现该 Skill；更新后若尚未出现，请重新打开 Codex 任务。仓库根目录 `README.md` 给出了完整核验方式。
 
 在新任务中可直接说：
 

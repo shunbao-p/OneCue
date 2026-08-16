@@ -1,6 +1,9 @@
 {
   "schema_version": 1,
   "model": "dots-tts-mf",
+  "repository": "rednote-hilab/dots.tts-mf",
+  "revision": "25c53fb462e57087e52237daa5ea30df1c5cc328",
+  "license": "Apache-2.0",
   "source": "Phase 5 final release manifest from previously verified local model files",
   "release_status": "phase5-final-release",
   "target": "aarch64-apple-darwin",

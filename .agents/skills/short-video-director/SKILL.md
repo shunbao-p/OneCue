@@ -1,6 +1,6 @@
 ---
 name: short-video-director
-description: Direct OneCue's short-video V2 workflow from natural-language content or an existing Schema v1 Job Bundle. Use when Codex is working in a OneCue checkout and needs to plan, create, resume, inspect, render, or revise a short video, including Brief and storyboard design, Image 2 keyframe planning, Job Bundle validation, package A/B rendering, evidence review, user review, and shot-scoped repair.
+description: Direct OneCue's static-storyboard short-video V2 workflow from natural-language content or an existing Schema v1 Job Bundle. Use when Codex is working in a OneCue checkout and needs to plan, create, resume, inspect, render, or revise a narrated video made from multiple Image 2 stills, package B speech, captions, and package A/FFmpeg hard cuts.
 ---
 
 # Short Video Director
@@ -31,6 +31,7 @@ Infer safe defaults for low-impact omissions. Ask only when missing information 
 
 - Locate the repository from the current workspace or the path supplied by the user. Do not assume one person's absolute checkout path.
 - Treat natural language as an upstream Codex input. Feed package A only a valid, self-contained Schema v1 Job Bundle.
+- For every newly created V1 shot, set `motion.preset` to `static`, `motion.strength` to `low`, and `transition_out` to `cut` with `duration_sec: 0`. Keep `visual.focus` for crop placement. Do not choose motion or crossfade presets merely because Schema v1 still accepts them.
 - Use the existing `python3 -m video_v2 validate|render` CLI. Do not import the pipeline to create another orchestrator.
 - Preserve the user's dirty worktree, existing Job Bundles, reports, cache, and final files. Never reset, checkout, clean, or overwrite unrelated work.
 - Use explicit argv, `shell=False`, and finite timeouts for external commands. Never turn user text into shell syntax.
@@ -40,6 +41,6 @@ Infer safe defaults for low-impact omissions. Ask only when missing information 
 
 Continue through authorized, local, reversible work: read-only checks, task-local records, content design, validation, targeted tests, report reading, and bounded contract repair.
 
-Pause for material ambiguity; new third-party/paid/cloud APIs, credentials, downloads, payment, or publishing; destructive deletion or cache cleanup; a need to change Schema/core pipeline/tool scope; and final user review of a candidate video. When the user has explicitly requested creation, the current session's built-in Image 2 capability is the established keyframe route, not a new external API expansion.
+Pause for material ambiguity; new third-party/paid/cloud APIs, credentials, downloads, payment, or publishing; destructive deletion or cache cleanup; a need to change Schema/core pipeline/tool scope; any request to expand the active route into image animation; and final user review of a candidate video. When the user has explicitly requested creation, the current session's built-in Image 2 capability is the established keyframe route, not a new external API expansion.
 
-Never describe FFmpeg push, pull, pan, tilt, or drift as natural semantic motion. Rain, water flow, vehicle travel, breathing, body motion, and similar object-level movement remain unimplemented; the formal advanced-provider count is zero.
+The active V1 result is a sequence of distinct static storyboard images, not one image for the whole narration and not animated stills. Do not invoke FFmpeg push/pull/pan/tilt/drift, crossfades, HyperFrames, DepthFlow, I2V, BGM, environmental audio, or SFX unless the user explicitly opens a separate scope.

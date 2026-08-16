@@ -1,6 +1,9 @@
 {
   "schema_version": 1,
   "model": "dots-tts-soar",
+  "repository": "rednote-hilab/dots.tts-soar",
+  "revision": "e3520f75254d0020a0406db31c51a79d00d22d55",
+  "license": "Apache-2.0",
   "source": "Phase 5 final release manifest from previously verified local model files",
   "release_status": "phase5-final-release",
   "target": "aarch64-apple-darwin",
