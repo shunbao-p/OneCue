@@ -73,6 +73,34 @@ class DirectorWorkflowDocumentationTests(unittest.TestCase):
         self.assertNotIn("默认基础 FFmpeg 虚拟摄影机运动", director)
         self.assertNotIn("basic FFmpeg camera motion", gates)
 
+    def test_supplied_footage_uses_a_codex_owned_route(self):
+        skill = (SKILL_ROOT / "SKILL.md").read_text(encoding="utf-8")
+        workflow_path = SKILL_ROOT / "references" / "video-material-workflow.md"
+        self.assertEqual((SKILL_ROOT / "VERSION").read_text(encoding="utf-8").strip(), "1.1.0")
+        self.assertTrue(workflow_path.is_file())
+        workflow = workflow_path.read_text(encoding="utf-8")
+
+        for required in (
+            "Codex footage route",
+            "general-video",
+            "media-use",
+            "HyperFrames",
+            "package A and package B do not process this route",
+        ):
+            with self.subTest(required=required):
+                self.assertIn(required, skill)
+
+        for required in (
+            "Preflight suitability review",
+            "Post-build review",
+            "use`, `partial use`, or `omit",
+            "Package A and package B are outside this route",
+            "voice loudness remains stable",
+        ):
+            with self.subTest(required=required):
+                self.assertIn(required, workflow)
+        self.assertNotRegex(workflow, r"/Users/[^/]+/")
+
     def test_open_source_review_borrows_principles_without_runtime(self):
         evidence = ACCEPTANCE_PATH.read_text(encoding="utf-8")
         for source in ("OpenMontage", "PixVerse Skills", "ffmpeg-ai"):

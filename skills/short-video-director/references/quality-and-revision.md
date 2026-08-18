@@ -1,5 +1,7 @@
 # Quality and revision
 
+This reference governs only the **Static V1 route** and its Job Bundle artifacts. Review or revise a Codex-owned footage edit with [video-material-workflow.md](video-material-workflow.md) instead.
+
 ## Inspect without mutation
 
 For an existing Job Bundle, read the task record if it already exists and run `validate --json`. Inspect the render report, cache manifest, final hash, ffprobe facts, and complete decode as requested. Do not create or update a task record, render, modify the formal bundle, or regenerate media merely to answer whether it can continue; report facts in the reply.
