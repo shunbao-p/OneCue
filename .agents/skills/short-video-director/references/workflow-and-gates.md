@@ -1,5 +1,7 @@
 # Workflow and gates
 
+This reference governs only the **Static V1 route**. If supplied video is selected for the result, stop here and use [video-material-workflow.md](video-material-workflow.md). Do not send that footage through package A or package B.
+
 ## Plan
 
 Apply safe defaults when omitted: zh-CN vertical video, 30–45 seconds, 6–10 shots, voice only, independent Image 2 stills, static shots, and hard cuts. Record assumptions and stop before media generation.
