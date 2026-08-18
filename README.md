@@ -14,6 +14,7 @@ OneCue 是一套面向 Apple Silicon Mac 的本地短视频工作流。使用者
 - Homebrew、Python 3.12 arm64、FFmpeg/ffprobe；
 - 首次安装需要联网下载 Python 依赖与 dots.tts 模型；
 - 默认 MF 模型及运行环境建议预留至少 12 GiB 可用空间。
+- 其他可正常满足运行 codex 的可能型号设备
 
 本仓库只提供本地使用方式，不包含 Gateway、Cloudflare、访问码、公网隧道、在线部署或远程多人服务。它也不是已签名、已公证的 macOS 安装包。
 
